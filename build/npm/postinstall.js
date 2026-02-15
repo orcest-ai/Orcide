@@ -198,5 +198,8 @@ for (let dir of dirs) {
 	npmInstall(dir, opts);
 }
 
-cp.execSync('git config pull.rebase merges');
-cp.execSync('git config blame.ignoreRevsFile .git-blame-ignore-revs');
+// Skip git config if not in a git repo (e.g. Docker build where .git is not copied)
+if (fs.existsSync(path.join(root, '.git'))) {
+	cp.execSync('git config pull.rebase merges');
+	cp.execSync('git config blame.ignoreRevsFile .git-blame-ignore-revs');
+}
