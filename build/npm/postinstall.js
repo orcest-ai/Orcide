@@ -46,7 +46,10 @@ function npmInstall(dir, opts) {
 		shell: true
 	};
 
-	const command = process.env['npm_command'] || 'install';
+	// When parent runs "npm rebuild", npm_command=rebuild causes subdirs to run "npm rebuild"
+	// which doesn't install packages. Subdirs need "npm install" to populate node_modules.
+	const rawCommand = opts.npmCommandOverride ?? process.env['npm_command'] || 'install';
+	const command = (rawCommand === 'rebuild' ? 'install' : rawCommand);
 
 	if (process.env['VSCODE_REMOTE_DEPENDENCIES_CONTAINER_NAME'] && /^(.build\/distro\/npm\/)?remote$/.test(dir)) {
 		const userinfo = os.userInfo();
@@ -144,6 +147,11 @@ for (let dir of dirs) {
 			env: {
 				...process.env
 			},
+		}
+		// When set, use --ignore-scripts for remote to skip @vscode/ripgrep postinstall (403 from GitHub).
+		// Caller must then copy system ripgrep into remote/node_modules/@vscode/ripgrep/bin and run npm rebuild in remote.
+		if (process.env['VSCODE_REMOTE_USE_SYSTEM_RIPGREP']) {
+			opts.npmCommandOverride = 'install --ignore-scripts';
 		}
 		if (process.env['VSCODE_REMOTE_CC']) {
 			opts.env['CC'] = process.env['VSCODE_REMOTE_CC'];

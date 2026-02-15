@@ -32,11 +32,14 @@ COPY . .
 
 # Install deps - requires X11 libs above for native-keymap, node-pty
 # Use --ignore-scripts to skip @vscode/ripgrep postinstall (403 from GitHub in cloud builds),
-# then supply system ripgrep and rebuild native modules
+# supply system ripgrep, run postinstall (with install not rebuild for subdirs), then rebuild native modules
 RUN npm i --ignore-scripts \
     && mkdir -p node_modules/@vscode/ripgrep/bin \
     && cp /usr/bin/rg node_modules/@vscode/ripgrep/bin/rg \
-    && npm rebuild
+    && VSCODE_REMOTE_USE_SYSTEM_RIPGREP=1 npm rebuild \
+    && mkdir -p remote/node_modules/@vscode/ripgrep/bin \
+    && cp /usr/bin/rg remote/node_modules/@vscode/ripgrep/bin/rg \
+    && (cd remote && npm rebuild)
 
 # Build the web version
 ENV NODE_OPTIONS="--max-old-space-size=8192"
