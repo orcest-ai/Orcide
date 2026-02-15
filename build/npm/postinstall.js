@@ -48,7 +48,9 @@ function npmInstall(dir, opts) {
 
 	// When parent runs "npm rebuild", npm_command=rebuild causes subdirs to run "npm rebuild"
 	// which doesn't install packages. Subdirs need "npm install" to populate node_modules.
-	const rawCommand = opts.npmCommandOverride ?? process.env['npm_command'] || 'install';
+	const rawCommand = opts.npmCommandOverride != null
+		? opts.npmCommandOverride
+		: (process.env['npm_command'] || 'install');
 	const command = (rawCommand === 'rebuild' ? 'install' : rawCommand);
 
 	if (process.env['VSCODE_REMOTE_DEPENDENCIES_CONTAINER_NAME'] && /^(.build\/distro\/npm\/)?remote$/.test(dir)) {
