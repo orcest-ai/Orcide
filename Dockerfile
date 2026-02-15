@@ -4,6 +4,7 @@
 FROM node:20-bookworm-slim
 
 # Install build deps for native modules (native-keymap, node-pty, etc.)
+# ripgrep: @vscode/ripgrep postinstall downloads from GitHub and gets 403 in cloud builds
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 \
     make \
@@ -21,6 +22,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libsecret-1-dev \
     libkrb5-dev \
     git \
+    ripgrep \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -29,7 +31,12 @@ WORKDIR /app
 COPY . .
 
 # Install deps - requires X11 libs above for native-keymap, node-pty
-RUN npm i
+# Use --ignore-scripts to skip @vscode/ripgrep postinstall (403 from GitHub in cloud builds),
+# then supply system ripgrep and rebuild native modules
+RUN npm i --ignore-scripts \
+    && mkdir -p node_modules/@vscode/ripgrep/bin \
+    && cp /usr/bin/rg node_modules/@vscode/ripgrep/bin/rg \
+    && npm rebuild
 
 # Build the web version
 ENV NODE_OPTIONS="--max-old-space-size=8192"
