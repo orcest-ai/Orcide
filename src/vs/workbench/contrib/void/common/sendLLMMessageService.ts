@@ -217,7 +217,7 @@ if (!isWeb) {
 		) { super(); }
 
 		sendLLMMessage(params: ServiceSendLLMMessageParams): string | null {
-			const { onText, onFinalMessage, onError, onAbort, modelSelection } = params;
+			const { onText, onFinalMessage, onError, modelSelection } = params;
 			if (modelSelection === null) {
 				onError({ message: `Please add a provider in Void's Settings.`, fullError: null });
 				return null;
