@@ -12,6 +12,7 @@ import { createDecorator } from '../../../../platform/instantiation/common/insta
 import { IStorageService, StorageScope, StorageTarget } from '../../../../platform/storage/common/storage.js';
 import { IMetricsService } from './metricsService.js';
 import { defaultProviderSettings, getModelCapabilities, ModelOverrides } from './modelCapabilities.js';
+import { IVoidDefaultsService } from './voidDefaultsService.js';
 import { VOID_SETTINGS_STORAGE_KEY } from './storageKeys.js';
 import { defaultSettingsOfProvider, FeatureName, ProviderName, ModelSelectionOfFeature, SettingsOfProvider, SettingName, providerNames, ModelSelection, modelSelectionsEqual, featureNames, VoidStatefulModelInfo, GlobalSettings, GlobalSettingName, defaultGlobalSettings, ModelSelectionOptions, OptionsOfModelSelection, ChatMode, OverridesOfModel, defaultOverridesOfModel, MCPUserStateOfName as MCPUserStateOfName, MCPUserState } from './voidSettingsTypes.js';
 
@@ -241,6 +242,7 @@ class VoidSettingsService extends Disposable implements IVoidSettingsService {
 		@IStorageService private readonly _storageService: IStorageService,
 		@IEncryptionService private readonly _encryptionService: IEncryptionService,
 		@IMetricsService private readonly _metricsService: IMetricsService,
+		@IVoidDefaultsService private readonly _voidDefaults: IVoidDefaultsService,
 		// could have used this, but it's clearer the way it is (+ slightly different eg StorageTarget.USER)
 		// @ISecretStorageService private readonly _secretStorageService: ISecretStorageService,
 	) {
@@ -295,6 +297,36 @@ class VoidSettingsService extends Disposable implements IVoidSettingsService {
 		}
 		catch (e) {
 			readS = defaultState()
+		}
+
+		// Apply server-provided Void defaults (e.g. from VOID_OPENROUTER_API_KEY env) when no prior state
+		if (this._voidDefaults?.openRouterApiKey && readS.settingsOfProvider.openRouter.apiKey === '') {
+			const defaultModel = this._voidDefaults.defaultModel;
+			const openRouterModels = readS.settingsOfProvider.openRouter.models;
+			const hasModel = openRouterModels.some(m => m.modelName === defaultModel);
+			const models = hasModel ? openRouterModels : [
+				...openRouterModels,
+				{ modelName: defaultModel, type: 'custom' as const, isHidden: false },
+			];
+			readS = {
+				...readS,
+				settingsOfProvider: {
+					...readS.settingsOfProvider,
+					openRouter: {
+						...readS.settingsOfProvider.openRouter,
+						apiKey: this._voidDefaults.openRouterApiKey,
+						models,
+						_didFillInProviderSettings: true,
+					},
+				},
+				modelSelectionOfFeature: {
+					...readS.modelSelectionOfFeature,
+					Chat: { providerName: 'openRouter', modelName: defaultModel },
+					'Ctrl+K': { providerName: 'openRouter', modelName: defaultModel },
+					Apply: { providerName: 'openRouter', modelName: defaultModel },
+					SCM: { providerName: 'openRouter', modelName: defaultModel },
+				},
+			};
 		}
 
 		// the stored data structure might be outdated, so we need to update it here

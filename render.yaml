@@ -1,0 +1,10 @@
+# Render.com blueprint for agent.orcest.ai
+# 1. Connect this repo to Render
+# 2. In Environment, set: VOID_OPENROUTER_API_KEY=sk-or-v1-your-key
+# 3. Optional: VOID_DEFAULT_MODEL=anthropic/claude-opus-4
+
+services:
+  - type: web
+    name: agent-orcest
+    runtime: docker
+    dockerfilePath: ./Dockerfile

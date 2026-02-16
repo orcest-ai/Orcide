@@ -20,6 +20,9 @@ import { RemoteAgentService } from '../services/remote/browser/remoteAgentServic
 import { RemoteAuthorityResolverService } from '../../platform/remote/browser/remoteAuthorityResolverService.js';
 import { IRemoteAuthorityResolverService, RemoteConnectionType } from '../../platform/remote/common/remoteAuthorityResolver.js';
 import { IRemoteAgentService } from '../services/remote/common/remoteAgentService.js';
+import { IMainProcessService } from '../../platform/ipc/common/mainProcessService.js';
+import { RemoteMainProcessService } from '../services/remote/browser/remoteMainProcessService.js';
+import { IVoidDefaultsService } from '../contrib/void/common/voidDefaultsService.js';
 import { IFileService } from '../../platform/files/common/files.js';
 import { FileService } from '../../platform/files/common/fileService.js';
 import { Schemas, connectionTokenCookieName } from '../../base/common/network.js';
@@ -344,6 +347,20 @@ export class BrowserMain extends Disposable {
 		const remoteAgentService = this._register(new RemoteAgentService(remoteSocketFactoryService, userDataProfileService, environmentService, productService, remoteAuthorityResolverService, signService, logService));
 		serviceCollection.set(IRemoteAgentService, remoteAgentService);
 		this._register(RemoteFileSystemProviderClient.register(remoteAgentService, fileService, logService));
+
+		// MainProcessService for web - delegates to remote so Void AI etc. work with code-server
+		serviceCollection.set(IMainProcessService, new RemoteMainProcessService(remoteAgentService));
+
+		// Void defaults from env (VOID_OPENROUTER_API_KEY, VOID_DEFAULT_MODEL) for agent.orcest.ai
+		// Overrides NoopVoidDefaultsService when server provides defaults
+		const voidDefaults = environmentService.options?.voidDefaults;
+		if (voidDefaults) {
+			serviceCollection.set(IVoidDefaultsService, Object.freeze({
+				_serviceBrand: undefined,
+				openRouterApiKey: voidDefaults.openRouterApiKey,
+				defaultModel: voidDefaults.defaultModel,
+			}));
+		}
 
 		// Long running services (workspace, config, storage)
 		const [configurationService, storageService] = await Promise.all([

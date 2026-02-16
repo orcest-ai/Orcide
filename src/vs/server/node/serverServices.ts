@@ -85,6 +85,7 @@ import { NativeMcpDiscoveryHelperChannel } from '../../platform/mcp/node/nativeM
 import { NativeMcpDiscoveryHelperService } from '../../platform/mcp/node/nativeMcpDiscoveryHelperService.js';
 import { IExtensionGalleryManifestService } from '../../platform/extensionManagement/common/extensionGalleryManifest.js';
 import { ExtensionGalleryManifestIPCService } from '../../platform/extensionManagement/common/extensionGalleryManifestServiceIpc.js';
+import { createVoidChannels } from './voidServerChannels.js';
 
 const eventPrefix = 'monacoworkbench';
 
@@ -240,6 +241,11 @@ export async function setupServerServices(connectionToken: ServerConnectionToken
 
 		const channel = new ExtensionManagementChannel(extensionManagementService, (ctx: RemoteAgentConnectionContext) => getUriTransformer(ctx.remoteAuthority));
 		socketServer.registerChannel('extensions', channel);
+
+		// Void AI channels for code-server/web (agent.orcest.ai)
+		const { sendLLMMessageChannel, metricsChannel } = createVoidChannels();
+		socketServer.registerChannel('void-channel-llmMessage', sendLLMMessageChannel);
+		socketServer.registerChannel('void-channel-metrics', metricsChannel);
 
 		// clean up extensions folder
 		remoteExtensionsScanner.whenExtensionsReady().then(() => extensionManagementService.cleanUp());

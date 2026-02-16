@@ -50,5 +50,6 @@ RUN npm run compile \
     && npm run compile-web
 
 # Render sets PORT; use code-server (production) not code-web (test harness)
+# For agent.orcest.ai: set VOID_OPENROUTER_API_KEY and VOID_DEFAULT_MODEL env vars in Render
 EXPOSE 10000
-CMD ["sh", "-c", "node out/server-main.js --host 0.0.0.0 --port ${PORT:-10000} --accept-server-license-terms"]
+CMD ["sh", "-c", "node out/server-main.js --host 0.0.0.0 --port ${PORT:-10000} --accept-server-license-terms --without-connection-token"]

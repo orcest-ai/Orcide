@@ -294,6 +294,12 @@ export interface IWorkbenchConstructionOptions {
 	readonly defaultLayout?: IDefaultLayout;
 
 	/**
+	 * Void AI defaults from server env (e.g. VOID_OPENROUTER_API_KEY, VOID_DEFAULT_MODEL).
+	 * Used for code-server/agent.orcest.ai deployments.
+	 */
+	readonly voidDefaults?: { openRouterApiKey: string; defaultModel: string };
+
+	/**
 	 * Optional configuration default overrides contributed to the workbench.
 	 */
 	readonly configurationDefaults?: Record<string, any>;

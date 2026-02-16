@@ -352,6 +352,12 @@ export class WebClientServer {
 			} catch (err) {/* Ignore Error */ }
 		}
 
+		// Void defaults from env for agent.orcest.ai / code-server deployments
+		const voidDefaults = (process.env.VOID_OPENROUTER_API_KEY || process.env.OPENROUTER_API_KEY) ? {
+			openRouterApiKey: process.env.VOID_OPENROUTER_API_KEY || process.env.OPENROUTER_API_KEY || '',
+			defaultModel: process.env.VOID_DEFAULT_MODEL || 'anthropic/claude-opus-4',
+		} : undefined;
+
 		const workbenchWebConfiguration = {
 			remoteAuthority,
 			serverBasePath: basePath,
@@ -362,7 +368,8 @@ export class WebClientServer {
 			folderUri: resolveWorkspaceURI(this._environmentService.args['default-folder']),
 			workspaceUri: resolveWorkspaceURI(this._environmentService.args['default-workspace']),
 			productConfiguration,
-			callbackRoute: callbackRoute
+			callbackRoute: callbackRoute,
+			voidDefaults,
 		};
 
 		const cookies = cookie.parse(req.headers.cookie || '');

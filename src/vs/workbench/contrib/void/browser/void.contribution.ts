@@ -66,6 +66,9 @@ import './voidSCMService.js'
 
 // ---------- common (unclear if these actually need to be imported, because they're already imported wherever they're used) ----------
 
+// voidDefaults (registers NoopVoidDefaultsService for desktop; web overwrites when env has VOID_OPENROUTER_API_KEY)
+import '../common/voidDefaultsService.js'
+
 // llmMessage
 import '../common/sendLLMMessageService.js'
 
