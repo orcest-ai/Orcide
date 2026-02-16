@@ -11,7 +11,7 @@ import * as path from '../../base/common/path.js';
 import { IURITransformer } from '../../base/common/uriIpc.js';
 import { getMachineId, getSqmMachineId, getdevDeviceId } from '../../base/node/id.js';
 import { Promises } from '../../base/node/pfs.js';
-import { ClientConnectionEvent, IMessagePassingProtocol, IPCServer, StaticRouter } from '../../base/parts/ipc/common/ipc.js';
+import { ClientConnectionEvent, IMessagePassingProtocol, IPCServer, IServerChannel, StaticRouter } from '../../base/parts/ipc/common/ipc.js';
 import { ProtocolConstants } from '../../base/parts/ipc/common/ipc.net.js';
 import { IConfigurationService } from '../../platform/configuration/common/configuration.js';
 import { ConfigurationService } from '../../platform/configuration/common/configurationService.js';
@@ -87,7 +87,6 @@ import { IExtensionGalleryManifestService } from '../../platform/extensionManage
 import { ExtensionGalleryManifestIPCService } from '../../platform/extensionManagement/common/extensionGalleryManifestServiceIpc.js';
 import { LLMMessageChannel } from '../../workbench/contrib/void/electron-main/sendLLMMessageChannel.js';
 import { IMetricsService } from '../../workbench/contrib/void/common/metricsService.js';
-import { IServerChannel } from '../../base/parts/ipc/common/ipc.js';
 
 const eventPrefix = 'monacoworkbench';
 
