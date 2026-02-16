@@ -6,6 +6,7 @@
 import { URI } from '../../../../base/common/uri.js';
 import { Disposable } from '../../../../base/common/lifecycle.js';
 import { registerSingleton, InstantiationType } from '../../../../platform/instantiation/common/extensions.js';
+import { isWeb } from '../../../../base/common/platform.js';
 import { createDecorator } from '../../../../platform/instantiation/common/instantiation.js';
 import { IFileService } from '../../../../platform/files/common/files.js';
 import { IPathService } from '../../../services/path/common/pathService.js';
@@ -357,4 +358,6 @@ class MCPService extends Disposable implements IMCPService {
 	// }
 }
 
-registerSingleton(IMCPService, MCPService, InstantiationType.Eager);
+if (!isWeb) {
+	registerSingleton(IMCPService, MCPService, InstantiationType.Eager);
+}
