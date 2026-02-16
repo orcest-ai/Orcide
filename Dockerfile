@@ -30,10 +30,10 @@ WORKDIR /app
 # Copy source (postinstall needs full tree for build/, remote/, etc.)
 COPY . .
 
-# Install deps - requires X11 libs above for native-keymap, node-pty
-# Use --ignore-scripts to skip @vscode/ripgrep postinstall (403 from GitHub in cloud builds),
-# supply system ripgrep, run postinstall (with install not rebuild for subdirs), then rebuild native modules
+# Install deps - use --ignore-scripts for root to skip @vscode/ripgrep postinstall (403 from GitHub),
+# then run postinstall manually with VSCODE_USE_SYSTEM_RIPGREP so build/remote use --ignore-scripts
 RUN npm i --ignore-scripts \
+    && VSCODE_USE_SYSTEM_RIPGREP=1 node build/npm/postinstall.js \
     && mkdir -p node_modules/@vscode/ripgrep/bin \
     && cp /usr/bin/rg node_modules/@vscode/ripgrep/bin/rg \
     && VSCODE_USE_SYSTEM_RIPGREP=1 npm rebuild \
@@ -44,9 +44,10 @@ RUN npm i --ignore-scripts \
     && cp /usr/bin/rg remote/node_modules/@vscode/ripgrep/bin/rg \
     && (cd remote && npm rebuild)
 
-# Build: compile produces out/ (server + workbench), compile-web adds extension web bundles
+# Build: build React components first (required by void/ TS imports), then compile, then compile-web
 ENV NODE_OPTIONS="--max-old-space-size=8192"
-RUN npm run compile \
+RUN npm run buildreact \
+    && npm run compile \
     && npm run compile-web
 
 # Render sets PORT; use code-server (production) not code-web (test harness)
