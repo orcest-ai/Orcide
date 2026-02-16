@@ -44,10 +44,11 @@ RUN npm i --ignore-scripts \
     && cp /usr/bin/rg remote/node_modules/@vscode/ripgrep/bin/rg \
     && (cd remote && npm rebuild)
 
-# Build the web version
+# Build: compile produces out/ (server + workbench), compile-web adds extension web bundles
 ENV NODE_OPTIONS="--max-old-space-size=8192"
-RUN npm run compile-web
+RUN npm run compile \
+    && npm run compile-web
 
-# Render sets PORT env
+# Render sets PORT; use code-server (production) not code-web (test harness)
 EXPOSE 10000
-CMD ["sh", "-c", "node scripts/code-web.js --host 0.0.0.0 --port ${PORT:-10000} --browserType none"]
+CMD ["sh", "-c", "node out/server-main.js --host 0.0.0.0 --port ${PORT:-10000} --accept-server-license-terms"]
