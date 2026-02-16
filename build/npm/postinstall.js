@@ -133,6 +133,10 @@ for (let dir of dirs) {
 				...process.env
 			},
 		}
+		// When set, use --ignore-scripts for build to skip @vscode/ripgrep postinstall (403 from GitHub).
+		if (process.env['VSCODE_USE_SYSTEM_RIPGREP']) {
+			opts.npmCommandOverride = 'install --ignore-scripts';
+		}
 		if (process.env['CC']) { opts.env['CC'] = 'gcc'; }
 		if (process.env['CXX']) { opts.env['CXX'] = 'g++'; }
 		if (process.env['CXXFLAGS']) { opts.env['CXXFLAGS'] = ''; }
@@ -152,7 +156,7 @@ for (let dir of dirs) {
 		}
 		// When set, use --ignore-scripts for remote to skip @vscode/ripgrep postinstall (403 from GitHub).
 		// Caller must then copy system ripgrep into remote/node_modules/@vscode/ripgrep/bin and run npm rebuild in remote.
-		if (process.env['VSCODE_REMOTE_USE_SYSTEM_RIPGREP']) {
+		if (process.env['VSCODE_USE_SYSTEM_RIPGREP']) {
 			opts.npmCommandOverride = 'install --ignore-scripts';
 		}
 		if (process.env['VSCODE_REMOTE_CC']) {

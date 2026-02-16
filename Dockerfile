@@ -36,7 +36,10 @@ COPY . .
 RUN npm i --ignore-scripts \
     && mkdir -p node_modules/@vscode/ripgrep/bin \
     && cp /usr/bin/rg node_modules/@vscode/ripgrep/bin/rg \
-    && VSCODE_REMOTE_USE_SYSTEM_RIPGREP=1 npm rebuild \
+    && VSCODE_USE_SYSTEM_RIPGREP=1 npm rebuild \
+    && mkdir -p build/node_modules/@vscode/ripgrep/bin \
+    && cp /usr/bin/rg build/node_modules/@vscode/ripgrep/bin/rg \
+    && (cd build && npm rebuild) \
     && mkdir -p remote/node_modules/@vscode/ripgrep/bin \
     && cp /usr/bin/rg remote/node_modules/@vscode/ripgrep/bin/rg \
     && (cd remote && npm rebuild)
