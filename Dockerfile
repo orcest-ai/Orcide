@@ -50,5 +50,7 @@ RUN npm run compile \
     && npm run compile-web
 
 # Render sets PORT; use code-server (production) not code-web (test harness)
+# --without-connection-token keeps the web UI reachable directly from the root domain.
+# Optional: set OPENROUTER_HTTP_REFERER and OPENROUTER_X_TITLE on Render env vars.
 EXPOSE 10000
-CMD ["sh", "-c", "node out/server-main.js --host 0.0.0.0 --port ${PORT:-10000} --accept-server-license-terms"]
+CMD ["sh", "-c", "node out/server-main.js --host 0.0.0.0 --port ${PORT:-10000} --accept-server-license-terms --without-connection-token"]

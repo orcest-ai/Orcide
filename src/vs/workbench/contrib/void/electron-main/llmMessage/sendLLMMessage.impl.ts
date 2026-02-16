@@ -58,6 +58,36 @@ const invalidApiKeyMessage = (providerName: ProviderName) => `Invalid ${displayI
 
 // ------------ OPENAI-COMPATIBLE (HELPERS) ------------
 
+const normalizeOpenRouterMinorVersionFormatting = (s: string) => {
+	return s
+		// claude-opus-4-5-20251101 -> claude-opus-4.5-20251101
+		.replace(/(claude-(?:opus|sonnet|haiku)-\d)-(\d)/g, '$1.$2')
+		// claude-3-7-sonnet -> claude-3.7-sonnet
+		.replace(/(claude-\d)-(\d)/g, '$1.$2')
+}
+
+const normalizeOpenRouterModelName = (modelName: string) => {
+	const trimmed = modelName.trim()
+	if (!trimmed) return trimmed
+
+	const lower = trimmed.toLowerCase()
+	const withNormalizedMinor = normalizeOpenRouterMinorVersionFormatting(lower)
+
+	if (withNormalizedMinor.includes('/')) {
+		const [provider, ...rest] = withNormalizedMinor.split('/')
+		return `${provider}/${rest.join('/')}`
+	}
+
+	if (withNormalizedMinor.includes('claude')) return `anthropic/${withNormalizedMinor}`
+	if (withNormalizedMinor.includes('deepseek')) return `deepseek/${withNormalizedMinor}`
+	if (withNormalizedMinor.includes('gemini')) return `google/${withNormalizedMinor}`
+	if (withNormalizedMinor.includes('mistral') || withNormalizedMinor.includes('devstral') || withNormalizedMinor.includes('codestral') || withNormalizedMinor.includes('ministral')) return `mistralai/${withNormalizedMinor}`
+	if (withNormalizedMinor.includes('qwen') || withNormalizedMinor.includes('qwq')) return `qwen/${withNormalizedMinor}`
+	if (withNormalizedMinor.includes('phi-4') || withNormalizedMinor.includes('phi4')) return `microsoft/${withNormalizedMinor}`
+
+	return withNormalizedMinor
+}
+
 
 
 const parseHeadersJSON = (s: string | undefined): Record<string, string | null | undefined> | undefined => {
@@ -96,12 +126,20 @@ const newOpenAICompatibleSDK = async ({ settingsOfProvider, providerName, includ
 	}
 	else if (providerName === 'openRouter') {
 		const thisConfig = settingsOfProvider[providerName]
+		const httpReferer = process.env.OPENROUTER_HTTP_REFERER?.trim()
+			|| process.env.VOID_OPENROUTER_HTTP_REFERER?.trim()
+			|| process.env.ORCEST_PUBLIC_URL?.trim()
+			|| 'https://voideditor.com'
+		const xTitle = process.env.OPENROUTER_X_TITLE?.trim()
+			|| process.env.VOID_OPENROUTER_X_TITLE?.trim()
+			|| process.env.ORCEST_APP_TITLE?.trim()
+			|| 'Void'
 		return new OpenAI({
 			baseURL: 'https://openrouter.ai/api/v1',
 			apiKey: thisConfig.apiKey,
 			defaultHeaders: {
-				'HTTP-Referer': 'https://voideditor.com', // Optional, for including your app on openrouter.ai rankings.
-				'X-Title': 'Void', // Optional. Shows in rankings on openrouter.ai.
+				'HTTP-Referer': httpReferer, // Optional, for including your app on openrouter.ai rankings.
+				'X-Title': xTitle, // Optional. Shows in rankings on openrouter.ai.
 			},
 			...commonPayloadOpts,
 		})
@@ -188,10 +226,12 @@ const _sendOpenAICompatibleFIM = async ({ messages: { prefix, suffix, stopTokens
 		return
 	}
 
+	const resolvedModelName = providerName === 'openRouter' ? normalizeOpenRouterModelName(modelName) : modelName
+
 	const openai = await newOpenAICompatibleSDK({ providerName, settingsOfProvider, includeInPayload: additionalOpenAIPayload })
 	openai.completions
 		.create({
-			model: modelName,
+			model: resolvedModelName,
 			prompt: prefix,
 			suffix: suffix,
 			stop: stopTokens,
@@ -203,6 +243,9 @@ const _sendOpenAICompatibleFIM = async ({ messages: { prefix, suffix, stopTokens
 		})
 		.catch(error => {
 			if (error instanceof OpenAI.APIError && error.status === 401) { onError({ message: invalidApiKeyMessage(providerName), fullError: error }); }
+			else if (providerName === 'openRouter' && error instanceof OpenAI.APIError && (error.status === 400 || error.status === 404 || error.status === 500)) {
+				onError({ message: `OpenRouter request failed (${error.status}). Please verify the model name (${resolvedModelName}) and API key permissions.`, fullError: error });
+			}
 			else { onError({ message: error + '', fullError: error }); }
 		})
 }
@@ -295,6 +338,8 @@ const _sendOpenAICompatibleChat = async ({ messages, onText, onFinalMessage, onE
 		{ tools: potentialTools } as const
 		: {}
 
+	const resolvedModelName = providerName === 'openRouter' ? normalizeOpenRouterModelName(modelName) : modelName
+
 	// instance
 	const openai: OpenAI = await newOpenAICompatibleSDK({ providerName, settingsOfProvider, includeInPayload })
 	if (providerName === 'microsoftAzure') {
@@ -302,7 +347,7 @@ const _sendOpenAICompatibleChat = async ({ messages, onText, onFinalMessage, onE
 		(openai as AzureOpenAI).deploymentName = modelName;
 	}
 	const options: OpenAI.Chat.Completions.ChatCompletionCreateParamsStreaming = {
-		model: modelName,
+		model: resolvedModelName,
 		messages: messages as any,
 		stream: true,
 		...nativeToolsObj,
@@ -383,6 +428,9 @@ const _sendOpenAICompatibleChat = async ({ messages, onText, onFinalMessage, onE
 		// when error/fail - this catches errors of both .create() and .then(for await)
 		.catch(error => {
 			if (error instanceof OpenAI.APIError && error.status === 401) { onError({ message: invalidApiKeyMessage(providerName), fullError: error }); }
+			else if (providerName === 'openRouter' && error instanceof OpenAI.APIError && (error.status === 400 || error.status === 404 || error.status === 500)) {
+				onError({ message: `OpenRouter request failed (${error.status}). Please verify the model name (${resolvedModelName}) and API key permissions.`, fullError: error });
+			}
 			else { onError({ message: error + '', fullError: error }); }
 		})
 }

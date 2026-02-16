@@ -1264,6 +1264,36 @@ const liteLLMSettings: VoidStaticProviderInfo = { // https://docs.litellm.ai/doc
 
 
 // ---------------- OPENROUTER ----------------
+const normalizeOpenRouterMinorVersionFormatting = (s: string) => {
+	return s
+		// claude-opus-4-5-20251101 -> claude-opus-4.5-20251101
+		.replace(/(claude-(?:opus|sonnet|haiku)-\d)-(\d)/g, '$1.$2')
+		// claude-3-7-sonnet -> claude-3.7-sonnet
+		.replace(/(claude-\d)-(\d)/g, '$1.$2')
+}
+
+const normalizeOpenRouterModelName = (modelName: string) => {
+	const trimmed = modelName.trim()
+	if (!trimmed) return trimmed
+
+	const lower = trimmed.toLowerCase()
+	const withNormalizedMinor = normalizeOpenRouterMinorVersionFormatting(lower)
+
+	if (withNormalizedMinor.includes('/')) {
+		const [provider, ...rest] = withNormalizedMinor.split('/')
+		return `${provider}/${rest.join('/')}`
+	}
+
+	if (withNormalizedMinor.includes('claude')) return `anthropic/${withNormalizedMinor}`
+	if (withNormalizedMinor.includes('deepseek')) return `deepseek/${withNormalizedMinor}`
+	if (withNormalizedMinor.includes('gemini')) return `google/${withNormalizedMinor}`
+	if (withNormalizedMinor.includes('mistral') || withNormalizedMinor.includes('devstral') || withNormalizedMinor.includes('codestral') || withNormalizedMinor.includes('ministral')) return `mistralai/${withNormalizedMinor}`
+	if (withNormalizedMinor.includes('qwen') || withNormalizedMinor.includes('qwq')) return `qwen/${withNormalizedMinor}`
+	if (withNormalizedMinor.includes('phi-4') || withNormalizedMinor.includes('phi4')) return `microsoft/${withNormalizedMinor}`
+
+	return withNormalizedMinor
+}
+
 const openRouterModelOptions_assumingOpenAICompat = {
 	'qwen/qwen3-235b-a22b': {
 		contextWindow: 40_960,
@@ -1327,6 +1357,24 @@ const openRouterModelOptions_assumingOpenAICompat = {
 		downloadable: false,
 	},
 	'anthropic/claude-opus-4': {
+		contextWindow: 200_000,
+		reservedOutputTokenSpace: null,
+		cost: { input: 15.00, output: 75.00 },
+		downloadable: false,
+		supportsFIM: false,
+		supportsSystemMessage: 'system-role',
+		reasoningCapabilities: false,
+	},
+	'anthropic/claude-opus-4.5': {
+		contextWindow: 200_000,
+		reservedOutputTokenSpace: null,
+		cost: { input: 15.00, output: 75.00 },
+		downloadable: false,
+		supportsFIM: false,
+		supportsSystemMessage: 'system-role',
+		reasoningCapabilities: false,
+	},
+	'anthropic/claude-opus-4.5-20251101': {
 		contextWindow: 200_000,
 		reservedOutputTokenSpace: null,
 		cost: { input: 15.00, output: 75.00 },
@@ -1412,12 +1460,30 @@ const openRouterModelOptions_assumingOpenAICompat = {
 const openRouterSettings: VoidStaticProviderInfo = {
 	modelOptions: openRouterModelOptions_assumingOpenAICompat,
 	modelOptionsFallback: (modelName) => {
-		const res = extensiveModelOptionsFallback(modelName)
+		const normalizedModelName = normalizeOpenRouterModelName(modelName)
+
+		// First, check for a direct match against known OpenRouter model IDs.
+		for (const knownModelName_ in openRouterModelOptions_assumingOpenAICompat) {
+			const knownModelName = knownModelName_ as keyof typeof openRouterModelOptions_assumingOpenAICompat
+			if (knownModelName.toLowerCase() !== normalizedModelName) continue
+			return { modelName: knownModelName, recognizedModelName: knownModelName, ...openRouterModelOptions_assumingOpenAICompat[knownModelName] }
+		}
+
+		// Otherwise, try the broad fallback and then normalize the resulting ID back to OpenRouter format.
+		const res = extensiveModelOptionsFallback(normalizedModelName)
+		if (!res) return null
+
 		// openRouter does not support gemini-style, use openai-style instead
 		if (res?.specialToolFormat === 'gemini-style') {
 			res.specialToolFormat = 'openai-style'
 		}
-		return res
+		const normalizedRecognizedModelName = normalizeOpenRouterModelName(res.recognizedModelName ?? res.modelName)
+		const normalizedFallbackModelName = normalizeOpenRouterModelName(res.modelName)
+		return {
+			...res,
+			modelName: normalizedFallbackModelName,
+			recognizedModelName: normalizedRecognizedModelName,
+		}
 	},
 	providerReasoningIOSettings: {
 		// reasoning: OAICompat + response.choices[0].delta.reasoning : payload should have {include_reasoning: true} https://openrouter.ai/announcements/reasoning-tokens-for-thinking-models
