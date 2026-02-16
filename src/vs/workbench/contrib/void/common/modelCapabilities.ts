@@ -26,7 +26,7 @@ export const defaultProviderSettings = {
 		endpoint: 'http://localhost:8000',
 	},
 	openRouter: {
-		apiKey: '',
+		apiKey: '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',
 	},
 	openAICompatible: {
 		endpoint: '',
