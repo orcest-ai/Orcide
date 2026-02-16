@@ -116,23 +116,17 @@ export const defaultModelsOfProvider = {
 	lmStudio: [], // autodetected
 
 	openRouter: [ // https://openrouter.ai/models
-		// 'anthropic/claude-3.7-sonnet:thinking',
-		'anthropic/claude-opus-4',
 		'anthropic/claude-sonnet-4',
-		'qwen/qwen3-235b-a22b',
+		'anthropic/claude-opus-4',
 		'anthropic/claude-3.7-sonnet',
 		'anthropic/claude-3.5-sonnet',
+		'qwen/qwen3-235b-a22b',
 		'deepseek/deepseek-r1',
+		'mistralai/codestral-2501',
+		'mistralai/devstral-small:free',
 		'deepseek/deepseek-r1-zero:free',
-		'mistralai/devstral-small:free'
-		// 'openrouter/quasar-alpha',
-		// 'google/gemini-2.5-pro-preview-03-25',
-		// 'mistralai/codestral-2501',
-		// 'qwen/qwen-2.5-coder-32b-instruct',
-		// 'mistralai/mistral-small-3.1-24b-instruct:free',
-		// 'google/gemini-2.0-flash-lite-preview-02-05:free',
-		// 'google/gemini-2.0-pro-exp-02-05:free',
-		// 'google/gemini-2.0-flash-exp:free',
+		'google/gemini-2.0-flash-exp:free',
+		'microsoft/phi-4-reasoning-plus:free',
 	],
 	groq: [ // https://console.groq.com/docs/models
 		'qwen-qwq-32b',
