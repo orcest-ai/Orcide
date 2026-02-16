@@ -418,6 +418,7 @@ export class WebClientServer {
 		const webWorkerExtensionHostIframeScriptSHA = 'sha256-2Q+j4hfT09+1+imS46J2YlkCtHWQt0/BE79PXjJ0ZJ8=';
 
 		const cspDirectives = [
+			...(remoteScheme === 'https' ? ['upgrade-insecure-requests;'] : []),
 			'default-src \'self\';',
 			'img-src \'self\' https: data: blob:;',
 			'media-src \'self\';',
