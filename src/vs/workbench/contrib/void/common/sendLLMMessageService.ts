@@ -216,7 +216,7 @@ if (!isWeb) {
 			@IVoidSettingsService private readonly voidSettingsService: IVoidSettingsService,
 		) { super(); }
 
-		sendLLMMessage(params: ServiceSendLLMMessageParams): string | null {
+		sendLLMMessage = (params: ServiceSendLLMMessageParams): string | null => {
 			const { onText, onFinalMessage, onError, modelSelection } = params;
 			if (modelSelection === null) {
 				onError({ message: `Please add a provider in Void's Settings.`, fullError: null });
@@ -296,16 +296,16 @@ if (!isWeb) {
 			return requestId;
 		}
 
-		abort(requestId: string) {
+		abort = (requestId: string) => {
 			this._abortControllers.get(requestId)?.abort();
 			this._abortControllers.delete(requestId);
 		}
 
-		ollamaList(params: ServiceModelListParams<OllamaModelResponse>) {
+		ollamaList = (params: ServiceModelListParams<OllamaModelResponse>) => {
 			params.onError({ error: 'Ollama not available in web mode' });
 		}
 
-		openAICompatibleList(params: ServiceModelListParams<OpenaiCompatibleModelResponse>) {
+		openAICompatibleList = (params: ServiceModelListParams<OpenaiCompatibleModelResponse>) => {
 			const { settingsOfProvider } = this.voidSettingsService.state;
 			const providerSettings = settingsOfProvider[params.providerName];
 			const apiKey = (providerSettings as any).apiKey as string | undefined;
