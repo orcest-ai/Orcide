@@ -52,4 +52,4 @@ RUN npm run buildreact \
 
 # Render sets PORT; use code-server (production) not code-web (test harness)
 EXPOSE 10000
-CMD ["sh", "-c", "node out/server-main.js --host 0.0.0.0 --port ${PORT:-10000} --accept-server-license-terms"]
+CMD ["sh", "-c", "node out/server-main.js --host 0.0.0.0 --port ${PORT:-10000} --without-connection-token --accept-server-license-terms"]
