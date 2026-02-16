@@ -260,10 +260,10 @@ class VoidSettingsService extends Disposable implements IVoidSettingsService {
 
 	dangerousSetState = async (newState: VoidSettingsState) => {
 		this.state = _validatedModelState(newState)
-		await this._storeState()
 		this._onDidChangeState.fire()
 		this._onUpdate_syncApplyToChat()
 		this._onUpdate_syncSCMToChat()
+		await this._storeState()
 	}
 	async resetState() {
 		await this.dangerousSetState(defaultState())
@@ -360,9 +360,13 @@ class VoidSettingsService extends Disposable implements IVoidSettingsService {
 
 
 	private async _storeState() {
-		const state = this.state
-		const encryptedState = await this._encryptionService.encrypt(JSON.stringify(state))
-		this._storageService.store(VOID_SETTINGS_STORAGE_KEY, encryptedState, StorageScope.APPLICATION, StorageTarget.USER);
+		try {
+			const state = this.state
+			const encryptedState = await this._encryptionService.encrypt(JSON.stringify(state))
+			this._storageService.store(VOID_SETTINGS_STORAGE_KEY, encryptedState, StorageScope.APPLICATION, StorageTarget.USER);
+		} catch (e) {
+			console.error('[VoidSettingsService] Failed to store state:', e);
+		}
 	}
 
 	setSettingOfProvider: SetSettingOfProviderFn = async (providerName, settingName, newVal) => {
@@ -393,14 +397,13 @@ class VoidSettingsService extends Disposable implements IVoidSettingsService {
 		}
 
 		this.state = _validatedModelState(newState)
-
-		await this._storeState()
 		this._onDidChangeState.fire()
+		await this._storeState()
 
 	}
 
 
-	private _onUpdate_syncApplyToChat() {
+	private _onUpdate_syncApplyToChat(){
 		// if sync is turned on, sync (call this whenever Chat model or !!sync changes)
 		this.setModelSelectionOfFeature('Apply', deepClone(this.state.modelSelectionOfFeature['Chat']))
 	}
@@ -418,10 +421,10 @@ class VoidSettingsService extends Disposable implements IVoidSettingsService {
 			}
 		}
 		this.state = _validatedModelState(newState)
-		await this._storeState()
 		this._onDidChangeState.fire()
 
 		// hooks
+		await this._storeState()
 		if (this.state.globalSettings.syncApplyToChat) this._onUpdate_syncApplyToChat()
 		if (this.state.globalSettings.syncSCMToChat) this._onUpdate_syncSCMToChat()
 
@@ -438,10 +441,9 @@ class VoidSettingsService extends Disposable implements IVoidSettingsService {
 		}
 
 		this.state = _validatedModelState(newState)
-
-		await this._storeState()
 		this._onDidChangeState.fire()
 
+		await this._storeState()
 		// hooks
 		if (featureName === 'Chat') {
 			// When Chat model changes, update synced features
@@ -469,9 +471,8 @@ class VoidSettingsService extends Disposable implements IVoidSettingsService {
 			}
 		}
 		this.state = _validatedModelState(newState)
-
-		await this._storeState()
 		this._onDidChangeState.fire()
+		await this._storeState()
 	}
 
 	setOverridesOfModel = async (providerName: ProviderName, modelName: string, overrides: Partial<ModelOverrides> | undefined) => {
@@ -490,8 +491,8 @@ class VoidSettingsService extends Disposable implements IVoidSettingsService {
 		};
 
 		this.state = _validatedModelState(newState);
-		await this._storeState();
 		this._onDidChangeState.fire();
+		await this._storeState();
 
 		this._metricsService.capture('Update Model Overrides', { providerName, modelName, overrides });
 	}
@@ -570,8 +571,8 @@ class VoidSettingsService extends Disposable implements IVoidSettingsService {
 			}
 		};
 		this.state = _validatedModelState(newState);
-		await this._storeState();
 		this._onDidChangeState.fire();
+		await this._storeState();
 		this._metricsService.capture('Set MCP Server States', { newStates });
 	}
 
