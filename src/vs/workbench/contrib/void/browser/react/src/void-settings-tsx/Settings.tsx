@@ -1459,7 +1459,7 @@ export const Settings = () => {
 											<VoidButtonBgDarken className='px-4 py-1' onClick={() => { commandService.executeCommand('workbench.action.selectTheme') }}>
 												Theme Settings
 											</VoidButtonBgDarken>
-											<VoidButtonBgDarken className='px-4 py-1' onClick={() => { nativeHostService.showItemInFolder(environmentService.logsHome.fsPath) }}>
+											<VoidButtonBgDarken className='px-4 py-1' onClick={() => { nativeHostService?.showItemInFolder(environmentService.logsHome.fsPath) }}>
 												Open Logs
 											</VoidButtonBgDarken>
 										</div>
