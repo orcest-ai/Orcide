@@ -44,9 +44,10 @@ RUN npm i --ignore-scripts \
     && cp /usr/bin/rg remote/node_modules/@vscode/ripgrep/bin/rg \
     && (cd remote && npm rebuild)
 
-# Build: compile produces out/ (server + workbench), compile-web adds extension web bundles
+# Build: generate Void React bundles first, then compile server/workbench and web extensions
 ENV NODE_OPTIONS="--max-old-space-size=8192"
-RUN npm run compile \
+RUN npm run buildreact \
+    && npm run compile \
     && npm run compile-web
 
 # Render sets PORT; use code-server (production) not code-web (test harness)
