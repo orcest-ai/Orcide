@@ -44,6 +44,12 @@ export class VoidUpdateService implements IVoidUpdateService {
 
 if (!isWeb) {
 	registerSingleton(IVoidUpdateService, VoidUpdateService, InstantiationType.Eager);
+} else {
+	class VoidUpdateServiceWeb implements IVoidUpdateService {
+		readonly _serviceBrand: undefined;
+		check = async () => ({ type: 'noUpdate' }) as any;
+	}
+	registerSingleton(IVoidUpdateService, VoidUpdateServiceWeb, InstantiationType.Eager);
 }
 
 

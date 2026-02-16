@@ -360,4 +360,17 @@ class MCPService extends Disposable implements IMCPService {
 
 if (!isWeb) {
 	registerSingleton(IMCPService, MCPService, InstantiationType.Eager);
+} else {
+	class MCPServiceWeb extends Disposable implements IMCPService {
+		_serviceBrand: undefined;
+		state: { mcpServerOfName: MCPServerOfName; error: string | undefined } = { mcpServerOfName: {}, error: undefined };
+		private readonly _onDidChangeState = this._register(new Emitter<void>());
+		onDidChangeState = this._onDidChangeState.event;
+		async revealMCPConfigFile() { }
+		async toggleServerIsOn() { }
+		getMCPTools() { return undefined; }
+		async callMCPTool(): Promise<{ result: RawMCPToolCall }> { return { result: { type: 'text', text: 'MCP not available in web mode' } as any }; }
+		stringifyResult() { return ''; }
+	}
+	registerSingleton(IMCPService, MCPServiceWeb, InstantiationType.Eager);
 }

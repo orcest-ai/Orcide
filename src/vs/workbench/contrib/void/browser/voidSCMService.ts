@@ -230,4 +230,11 @@ registerAction2(GenerateCommitMessageAction)
 registerAction2(LoadingGenerateCommitMessageAction)
 if (!isWeb) {
 	registerSingleton(IGenerateCommitMessageService, GenerateCommitMessageService, InstantiationType.Delayed)
+} else {
+	class GenerateCommitMessageServiceWeb implements IGenerateCommitMessageService {
+		readonly _serviceBrand: undefined;
+		async generateCommitMessage() { }
+		abort() { }
+	}
+	registerSingleton(IGenerateCommitMessageService, GenerateCommitMessageServiceWeb, InstantiationType.Delayed)
 }
