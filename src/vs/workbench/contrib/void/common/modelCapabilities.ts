@@ -117,8 +117,8 @@ export const defaultModelsOfProvider = {
 
 	openRouter: [ // https://openrouter.ai/models
 		// 'anthropic/claude-3.7-sonnet:thinking',
-		'anthropic/claude-opus-4',
 		'anthropic/claude-sonnet-4',
+		'anthropic/claude-opus-4',
 		'qwen/qwen3-235b-a22b',
 		'anthropic/claude-3.7-sonnet',
 		'anthropic/claude-3.5-sonnet',

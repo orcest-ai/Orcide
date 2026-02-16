@@ -15,6 +15,18 @@ import { defaultProviderSettings, getModelCapabilities, ModelOverrides } from '.
 import { VOID_SETTINGS_STORAGE_KEY } from './storageKeys.js';
 import { defaultSettingsOfProvider, FeatureName, ProviderName, ModelSelectionOfFeature, SettingsOfProvider, SettingName, providerNames, ModelSelection, modelSelectionsEqual, featureNames, VoidStatefulModelInfo, GlobalSettings, GlobalSettingName, defaultGlobalSettings, ModelSelectionOptions, OptionsOfModelSelection, ChatMode, OverridesOfModel, defaultOverridesOfModel, MCPUserStateOfName as MCPUserStateOfName, MCPUserState } from './voidSettingsTypes.js';
 
+const getEnvVar = (name: string): string | undefined => {
+	try {
+		// Guard for non-node runtimes / bundlers
+		const env = (globalThis as any)?.process?.env
+		const v = env?.[name]
+		if (typeof v === 'string' && v.trim().length > 0) return v.trim()
+	} catch {
+		// ignore
+	}
+	return undefined
+}
+
 
 // name is the name in the dropdown
 export type ModelOption = { name: string, selection: ModelSelection }
@@ -151,7 +163,17 @@ const _validatedModelState = (state: Omit<VoidSettingsState, '_modelOptions'>): 
 	for (const providerName of providerNames) {
 		const settingsAtProvider = newSettingsOfProvider[providerName]
 
-		const didFillInProviderSettings = Object.keys(defaultProviderSettings[providerName]).every(key => !!settingsAtProvider[key as keyof typeof settingsAtProvider])
+		const didFillInProviderSettings = Object.keys(defaultProviderSettings[providerName]).every((key) => {
+			const val = settingsAtProvider[key as keyof typeof settingsAtProvider]
+			if (!!val) return true
+
+			// Allow server-side OpenRouter key via env var without storing/exposing it in settings.
+			if (providerName === 'openRouter' && key === 'apiKey') {
+				return !!getEnvVar('OPENROUTER_API_KEY') || !!getEnvVar('ORCEST_OPENROUTER_API_KEY')
+			}
+
+			return false
+		})
 
 		if (didFillInProviderSettings === settingsAtProvider._didFillInProviderSettings) continue
 

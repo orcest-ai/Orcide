@@ -69,6 +69,18 @@ const parseHeadersJSON = (s: string | undefined): Record<string, string | null |
 	}
 }
 
+const getEnvVar = (name: string): string | undefined => {
+	try {
+		// Guard for non-node runtimes / bundlers
+		const env = (globalThis as any)?.process?.env
+		const v = env?.[name]
+		if (typeof v === 'string' && v.trim().length > 0) return v.trim()
+	} catch {
+		// ignore
+	}
+	return undefined
+}
+
 const newOpenAICompatibleSDK = async ({ settingsOfProvider, providerName, includeInPayload }: { settingsOfProvider: SettingsOfProvider, providerName: ProviderName, includeInPayload?: { [s: string]: any } }) => {
 	const commonPayloadOpts: ClientOptions = {
 		dangerouslyAllowBrowser: true,
@@ -96,12 +108,18 @@ const newOpenAICompatibleSDK = async ({ settingsOfProvider, providerName, includ
 	}
 	else if (providerName === 'openRouter') {
 		const thisConfig = settingsOfProvider[providerName]
+		const apiKey =
+			thisConfig.apiKey
+			|| getEnvVar('OPENROUTER_API_KEY')
+			|| getEnvVar('ORCEST_OPENROUTER_API_KEY')
 		return new OpenAI({
 			baseURL: 'https://openrouter.ai/api/v1',
-			apiKey: thisConfig.apiKey,
+			apiKey,
 			defaultHeaders: {
-				'HTTP-Referer': 'https://voideditor.com', // Optional, for including your app on openrouter.ai rankings.
-				'X-Title': 'Void', // Optional. Shows in rankings on openrouter.ai.
+				// Optional, for including your app on openrouter.ai rankings.
+				'HTTP-Referer': getEnvVar('ORCEST_OPENROUTER_REFERER') || 'https://agent.orcest.ai',
+				// Optional. Shows in rankings on openrouter.ai.
+				'X-Title': getEnvVar('ORCEST_OPENROUTER_APP_TITLE') || 'Orcest Agent',
 			},
 			...commonPayloadOpts,
 		})
