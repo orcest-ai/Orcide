@@ -50,6 +50,12 @@ RUN npm run buildreact \
     && npm run compile \
     && npm run compile-web
 
+# VSCODE_DEV=1 tells the server to use the dev workbench template which loads CSS
+# dynamically via import maps. Without this, the server expects a bundled workbench.css
+# that is only produced by the full packaging pipeline (gulp vscode-web-min), not by
+# npm run compile.
+ENV VSCODE_DEV=1
+
 # Render sets PORT; use code-server (production) not code-web (test harness)
 EXPOSE 10000
 CMD ["sh", "-c", "node out/server-main.js --host 0.0.0.0 --port ${PORT:-10000} --without-connection-token --accept-server-license-terms"]
