@@ -53,6 +53,14 @@ export class MetricsService implements IMetricsService {
 
 if (!isWeb) {
 	registerSingleton(IMetricsService, MetricsService, InstantiationType.Eager);
+} else {
+	class MetricsServiceWeb implements IMetricsService {
+		readonly _serviceBrand: undefined;
+		capture() { }
+		setOptOut() { }
+		async getDebuggingProperties() { return {} }
+	}
+	registerSingleton(IMetricsService, MetricsServiceWeb, InstantiationType.Eager);
 }
 
 

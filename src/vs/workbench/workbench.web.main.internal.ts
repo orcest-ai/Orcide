@@ -121,9 +121,6 @@ registerSingleton(IDefaultAccountService, NullDefaultAccountService, Instantiati
 
 //#region --- workbench contributions
 
-// Void: web-compatible service overrides (must come after common to override Electron-only registrations)
-import './contrib/void/browser/void.web.services.js';
-
 // Logs
 import './contrib/logs/browser/logs.contribution.js';
 
