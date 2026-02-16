@@ -212,9 +212,16 @@ const _validatedModelState = (state: Omit<VoidSettingsState, '_modelOptions'>): 
 
 
 const defaultState = () => {
+	const defaultModelSelection: ModelSelection = { providerName: 'openRouter', modelName: 'anthropic/claude-sonnet-4' };
 	const d: VoidSettingsState = {
 		settingsOfProvider: deepClone(defaultSettingsOfProvider),
-		modelSelectionOfFeature: { 'Chat': null, 'Ctrl+K': null, 'Autocomplete': null, 'Apply': null, 'SCM': null },
+		modelSelectionOfFeature: {
+			'Chat': defaultModelSelection,
+			'Ctrl+K': defaultModelSelection,
+			'Autocomplete': null,
+			'Apply': defaultModelSelection,
+			'SCM': defaultModelSelection,
+		},
 		globalSettings: deepClone(defaultGlobalSettings),
 		optionsOfModelSelection: { 'Chat': {}, 'Ctrl+K': {}, 'Autocomplete': {}, 'Apply': {}, 'SCM': {} },
 		overridesOfModel: deepClone(defaultOverridesOfModel),

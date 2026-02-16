@@ -465,7 +465,7 @@ export const defaultGlobalSettings: GlobalSettings = {
 	autoApprove: {},
 	showInlineSuggestions: true,
 	includeToolLintErrors: true,
-	isOnboardingComplete: false,
+	isOnboardingComplete: true,
 	disableSystemMessage: false,
 	autoAcceptLLMChanges: false,
 }

@@ -85,6 +85,9 @@ import { NativeMcpDiscoveryHelperChannel } from '../../platform/mcp/node/nativeM
 import { NativeMcpDiscoveryHelperService } from '../../platform/mcp/node/nativeMcpDiscoveryHelperService.js';
 import { IExtensionGalleryManifestService } from '../../platform/extensionManagement/common/extensionGalleryManifest.js';
 import { ExtensionGalleryManifestIPCService } from '../../platform/extensionManagement/common/extensionGalleryManifestServiceIpc.js';
+import { LLMMessageChannel } from '../../workbench/contrib/void/electron-main/sendLLMMessageChannel.js';
+import { IMetricsService } from '../../workbench/contrib/void/common/metricsService.js';
+import { IServerChannel } from '../../base/parts/ipc/common/ipc.js';
 
 const eventPrefix = 'monacoworkbench';
 
@@ -245,6 +248,30 @@ export async function setupServerServices(connectionToken: ServerConnectionToken
 		remoteExtensionsScanner.whenExtensionsReady().then(() => extensionManagementService.cleanUp());
 
 		disposables.add(new ErrorTelemetry(accessor.get(ITelemetryService)));
+
+		// Void: Register LLM and other Void channels for web/server mode
+		const noopMetricsService: IMetricsService = {
+			_serviceBrand: undefined,
+			capture() { },
+			setOptOut() { },
+			getDebuggingProperties() { return Promise.resolve({}); }
+		};
+
+		try {
+			const sendLLMMessageChannel = new LLMMessageChannel(noopMetricsService);
+			socketServer.registerChannel('void-channel-llmMessage', sendLLMMessageChannel);
+		} catch (e) {
+			logService.error('Failed to register Void LLM channel:', e);
+		}
+
+		const noopServerChannel: IServerChannel = {
+			listen() { return Event.None; },
+			call() { return Promise.resolve(); }
+		};
+		socketServer.registerChannel('void-channel-metrics', noopServerChannel);
+		socketServer.registerChannel('void-channel-update', noopServerChannel);
+		socketServer.registerChannel('void-channel-scm', noopServerChannel);
+		socketServer.registerChannel('void-channel-mcp', noopServerChannel);
 
 		return {
 			telemetryService: accessor.get(ITelemetryService)

@@ -95,6 +95,9 @@ import { ISecretStorageService } from '../../platform/secrets/common/secrets.js'
 import { TunnelSource } from '../services/remote/common/tunnelModel.js';
 import { mainWindow } from '../../base/browser/window.js';
 import { INotificationService, Severity } from '../../platform/notification/common/notification.js';
+import { IMainProcessService } from '../../platform/ipc/common/mainProcessService.js';
+import { IChannel, IServerChannel } from '../../base/parts/ipc/common/ipc.js';
+import { Event } from '../../base/common/event.js';
 
 export class BrowserMain extends Disposable {
 
@@ -344,6 +347,25 @@ export class BrowserMain extends Disposable {
 		const remoteAgentService = this._register(new RemoteAgentService(remoteSocketFactoryService, userDataProfileService, environmentService, productService, remoteAuthorityResolverService, signService, logService));
 		serviceCollection.set(IRemoteAgentService, remoteAgentService);
 		this._register(RemoteFileSystemProviderClient.register(remoteAgentService, fileService, logService));
+
+		// Void: Provide IMainProcessService in web context via remote agent connection
+		const webMainProcessService: IMainProcessService = {
+			_serviceBrand: undefined,
+			getChannel(channelName: string): IChannel {
+				const connection = remoteAgentService.getConnection();
+				if (connection) {
+					return connection.getChannel(channelName);
+				}
+				return {
+					listen<T>(): Event<T> { return Event.None; },
+					call<T>(): Promise<T> { return Promise.resolve(undefined as T); }
+				};
+			},
+			registerChannel(_channelName: string, _channel: IServerChannel<string>): void {
+				// Not supported in web context
+			}
+		};
+		serviceCollection.set(IMainProcessService, webMainProcessService);
 
 		// Long running services (workspace, config, storage)
 		const [configurationService, storageService] = await Promise.all([
