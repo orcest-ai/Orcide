@@ -44,6 +44,11 @@ RUN npm i --ignore-scripts \
     && cp /usr/bin/rg remote/node_modules/@vscode/ripgrep/bin/rg \
     && (cd remote && npm rebuild)
 
+# Build React components first (produces react/out/ needed by compile)
+RUN cd src/vs/workbench/contrib/void/browser/react \
+    && npx scope-tailwind ./src -o src2/ -s void-scope -c styles.css -p "void-" \
+    && npx tsup
+
 # Build: compile produces out/ (server + workbench), compile-web adds extension web bundles
 ENV NODE_OPTIONS="--max-old-space-size=8192"
 RUN npm run compile \
@@ -51,4 +56,4 @@ RUN npm run compile \
 
 # Render sets PORT; use code-server (production) not code-web (test harness)
 EXPOSE 10000
-CMD ["sh", "-c", "node out/server-main.js --host 0.0.0.0 --port ${PORT:-10000} --accept-server-license-terms"]
+CMD ["sh", "-c", "node out/server-main.js --host 0.0.0.0 --port ${PORT:-10000} --without-connection-token --accept-server-license-terms"]
