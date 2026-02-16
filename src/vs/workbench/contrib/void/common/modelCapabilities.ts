@@ -115,16 +115,13 @@ export const defaultModelsOfProvider = {
 	],
 	lmStudio: [], // autodetected
 
-	openRouter: [ // https://openrouter.ai/models
+	openRouter: [ // https://openrouter.ai/models (keep <=9 to avoid all-hidden default)
 		'anthropic/claude-sonnet-4',
 		'anthropic/claude-opus-4',
-		'anthropic/claude-3.7-sonnet',
-		'anthropic/claude-3.5-sonnet',
-		'qwen/qwen3-235b-a22b',
 		'deepseek/deepseek-r1',
 		'mistralai/codestral-2501',
+		'qwen/qwen3-235b-a22b',
 		'mistralai/devstral-small:free',
-		'deepseek/deepseek-r1-zero:free',
 		'google/gemini-2.0-flash-exp:free',
 		'microsoft/phi-4-reasoning-plus:free',
 	],
