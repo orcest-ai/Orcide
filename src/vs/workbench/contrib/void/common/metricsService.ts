@@ -6,6 +6,7 @@
 import { createDecorator, ServicesAccessor } from '../../../../platform/instantiation/common/instantiation.js';
 import { ProxyChannel } from '../../../../base/parts/ipc/common/ipc.js';
 import { registerSingleton, InstantiationType } from '../../../../platform/instantiation/common/extensions.js';
+import { isWeb } from '../../../../base/common/platform.js';
 import { IMainProcessService } from '../../../../platform/ipc/common/mainProcessService.js';
 import { localize2 } from '../../../../nls.js';
 import { registerAction2, Action2 } from '../../../../platform/actions/common/actions.js';
@@ -50,7 +51,9 @@ export class MetricsService implements IMetricsService {
 	}
 }
 
-registerSingleton(IMetricsService, MetricsService, InstantiationType.Eager);
+if (!isWeb) {
+	registerSingleton(IMetricsService, MetricsService, InstantiationType.Eager);
+}
 
 
 // debugging action

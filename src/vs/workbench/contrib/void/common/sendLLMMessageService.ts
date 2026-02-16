@@ -7,6 +7,7 @@ import { EventLLMMessageOnTextParams, EventLLMMessageOnErrorParams, EventLLMMess
 
 import { createDecorator } from '../../../../platform/instantiation/common/instantiation.js';
 import { registerSingleton, InstantiationType } from '../../../../platform/instantiation/common/extensions.js';
+import { isWeb } from '../../../../base/common/platform.js';
 import { IChannel } from '../../../../base/parts/ipc/common/ipc.js';
 import { IMainProcessService } from '../../../../platform/ipc/common/mainProcessService.js';
 import { generateUuid } from '../../../../base/common/uuid.js';
@@ -195,5 +196,7 @@ export class LLMMessageService extends Disposable implements ILLMMessageService 
 	}
 }
 
-registerSingleton(ILLMMessageService, LLMMessageService, InstantiationType.Eager);
+if (!isWeb) {
+	registerSingleton(ILLMMessageService, LLMMessageService, InstantiationType.Eager);
+}
 
