@@ -33,7 +33,7 @@ COPY . .
 # Install deps - requires X11 libs above for native-keymap, node-pty
 # Use --ignore-scripts to skip @vscode/ripgrep postinstall (403 from GitHub in cloud builds),
 # supply system ripgrep, run postinstall (with install not rebuild for subdirs), then rebuild native modules
-RUN npm i --ignore-scripts \
+RUN npm i --include=dev --ignore-scripts \
     && mkdir -p node_modules/@vscode/ripgrep/bin \
     && cp /usr/bin/rg node_modules/@vscode/ripgrep/bin/rg \
     && VSCODE_USE_SYSTEM_RIPGREP=1 npm rebuild \
@@ -46,7 +46,8 @@ RUN npm i --ignore-scripts \
 
 # Build: compile produces out/ (server + workbench), compile-web adds extension web bundles
 ENV NODE_OPTIONS="--max-old-space-size=8192"
-RUN npm run compile \
+RUN npm run buildreact \
+    && npm run compile \
     && npm run compile-web
 
 # Render sets PORT; use code-server (production) not code-web (test harness)
