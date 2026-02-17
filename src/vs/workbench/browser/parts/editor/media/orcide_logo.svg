@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="orcideGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6B46C1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4299E1;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="orcideGrad2" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#805AD5;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#3182CE;stop-opacity:0.8" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="240" fill="url(#orcideGrad)" opacity="0.15"/>
+  <circle cx="256" cy="256" r="240" stroke="url(#orcideGrad)" stroke-width="4" fill="none" opacity="0.4"/>
+  
+  <!-- Central conductor baton (diagonal line) -->
+  <line x1="180" y1="340" x2="340" y2="140" stroke="url(#orcideGrad)" stroke-width="8" stroke-linecap="round"/>
+  
+  <!-- Baton tip glow -->
+  <circle cx="340" cy="140" r="12" fill="url(#orcideGrad)" opacity="0.9"/>
+  <circle cx="340" cy="140" r="6" fill="white" opacity="0.8"/>
+  
+  <!-- AI Nodes - hexagonal arrangement around baton -->
+  <!-- Node 1 - top left -->
+  <circle cx="160" cy="160" r="28" fill="url(#orcideGrad2)" opacity="0.7"/>
+  <circle cx="160" cy="160" r="14" fill="url(#orcideGrad)" opacity="0.9"/>
+  <circle cx="160" cy="160" r="6" fill="white" opacity="0.7"/>
+  
+  <!-- Node 2 - top right -->
+  <circle cx="360" cy="200" r="24" fill="url(#orcideGrad2)" opacity="0.6"/>
+  <circle cx="360" cy="200" r="12" fill="url(#orcideGrad)" opacity="0.9"/>
+  <circle cx="360" cy="200" r="5" fill="white" opacity="0.7"/>
+  
+  <!-- Node 3 - mid left -->
+  <circle cx="130" cy="280" r="22" fill="url(#orcideGrad2)" opacity="0.5"/>
+  <circle cx="130" cy="280" r="11" fill="url(#orcideGrad)" opacity="0.9"/>
+  <circle cx="130" cy="280" r="5" fill="white" opacity="0.7"/>
+  
+  <!-- Node 4 - bottom center -->
+  <circle cx="280" cy="380" r="26" fill="url(#orcideGrad2)" opacity="0.6"/>
+  <circle cx="280" cy="380" r="13" fill="url(#orcideGrad)" opacity="0.9"/>
+  <circle cx="280" cy="380" r="5" fill="white" opacity="0.7"/>
+  
+  <!-- Node 5 - right -->
+  <circle cx="400" cy="320" r="20" fill="url(#orcideGrad2)" opacity="0.5"/>
+  <circle cx="400" cy="320" r="10" fill="url(#orcideGrad)" opacity="0.9"/>
+  <circle cx="400" cy="320" r="4" fill="white" opacity="0.7"/>
+  
+  <!-- Connection lines (orchestration paths) -->
+  <line x1="160" y1="160" x2="340" y2="140" stroke="url(#orcideGrad)" stroke-width="2" opacity="0.3"/>
+  <line x1="160" y1="160" x2="130" y2="280" stroke="url(#orcideGrad)" stroke-width="2" opacity="0.3"/>
+  <line x1="340" y1="140" x2="360" y2="200" stroke="url(#orcideGrad)" stroke-width="2" opacity="0.3"/>
+  <line x1="360" y1="200" x2="400" y2="320" stroke="url(#orcideGrad)" stroke-width="2" opacity="0.3"/>
+  <line x1="130" y1="280" x2="280" y2="380" stroke="url(#orcideGrad)" stroke-width="2" opacity="0.3"/>
+  <line x1="280" y1="380" x2="400" y2="320" stroke="url(#orcideGrad)" stroke-width="2" opacity="0.3"/>
+  <line x1="160" y1="160" x2="360" y2="200" stroke="url(#orcideGrad)" stroke-width="1.5" opacity="0.2"/>
+  <line x1="130" y1="280" x2="400" y2="320" stroke="url(#orcideGrad)" stroke-width="1.5" opacity="0.2"/>
+  
+  <!-- Baton handle -->
+  <circle cx="180" cy="340" r="8" fill="url(#orcideGrad)" opacity="0.6"/>
+  
+  <!-- "O" letter stylization in center -->
+  <text x="256" y="270" font-family="Arial, sans-serif" font-size="72" font-weight="bold" fill="url(#orcideGrad)" text-anchor="middle" opacity="0.8">O</text>
+</svg>
