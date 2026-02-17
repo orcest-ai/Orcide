@@ -1,4 +1,5 @@
-# Dockerfile for ide.orcest.ai (VS Code fork) - Render.com deploy
+# Dockerfile for Orcide (ide.orcest.ai) — Self-hosted LLM Orchestration IDE
+# Orcide: Orchestrated Revolutionary Collaborative Intelligence Development Environment
 # Requires X11 libs for native-keymap, node-pty, etc.
 
 FROM node:20-bookworm-slim

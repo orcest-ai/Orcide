@@ -1,41 +1,78 @@
-# Welcome to Void.
+# Orcide
+
+**Orchestrated Revolutionary Collaborative Intelligence Development Environment**
+
+> *Orcide: Ignite Your Creative AI Orchestra.*
 
 <div align="center">
-	<img
-		src="./src/vs/workbench/browser/parts/editor/media/slice_of_void.png"
-	 	alt="Void Welcome"
-		width="300"
-	 	height="300"
-	/>
+  <img
+    src="./src/vs/workbench/browser/parts/editor/media/orcide_logo.svg"
+    alt="Orcide"
+    width="300"
+    height="300"
+  />
 </div>
 
-Void is the open-source Cursor alternative.
+---
 
-Use AI agents on your codebase, checkpoint and visualize changes, and bring any model or host locally. Void sends messages directly to providers without retaining your data.
+Orcide is a self-hosted, open-source IDE for **LLM Orchestration** — the dedicated IDE companion to [Orcest.ai](https://orcest.ai). Built as a fork of VS Code, Orcide gives you a premium, visual environment for building, orchestrating, and deploying AI agents and workflows.
 
-This repo contains the full sourcecode for Void. If you're new, welcome!
+## ✨ Features
 
-- 🧭 [Website](https://voideditor.com)
+- 🤖 **AI Agent Modes** — Chat, Agent, and Gather modes for intelligent code assistance
+- 🔗 **Multi-Model Support** — Connect to Anthropic, OpenAI, Gemini, Ollama, and 15+ providers
+- 🏠 **Local-First** — Run models locally with Ollama, LM Studio, vLLM — your data stays private
+- 🎯 **Smart Apply** — Fast Apply with Search/Replace or full file rewrite
+- 🔧 **MCP Integration** — Model Context Protocol for extensible agent tools
+- ⌨️ **Quick Edit (Ctrl+K)** — Inline code editing powered by AI
+- 📝 **AI Commit Messages** — Auto-generate commit messages from diffs
+- 🔄 **One-Click Migration** — Transfer settings from VS Code, Cursor, or Windsurf
 
-- 👋 [Discord](https://discord.gg/RSNjgaugJs)
+## 🚀 Getting Started
 
-- 🚙 [Project Board](https://github.com/orgs/voideditor/projects/2)
+### Self-Hosted (Docker)
 
+```bash
+docker build -t orcide .
+docker run -p 10000:10000 orcide
+```
 
-## Note
+Then open `http://localhost:10000` in your browser.
 
-We've paused work on the Void IDE (this repo) to explore a few novel coding ideas. We want to focus on innovation over feature-parity. Void will continue running, but without maintenance some existing features might stop working over time. Depending on the direction of our new work, we might not resume Void as an IDE.
+### Development Mode
 
-We won't be actively reviewing Issues and PRs, but we will respond to all [email](mailto:hello@voideditor.com) inquiries on building and maintaining your own version of Void while we're paused. 
+1. Clone: `git clone https://github.com/danialsamiei/ide.orcest.ai`
+2. Install: `npm install`
+3. Build React: `npm run buildreact`
+4. Compile: `npm run compile`
+5. Launch: `./scripts/code.sh` (Linux/macOS) or `scripts\code.bat` (Windows)
 
-## Reference
+See [HOW_TO_CONTRIBUTE.md](./HOW_TO_CONTRIBUTE.md) for detailed setup instructions.
 
-Void is a fork of the [vscode](https://github.com/microsoft/vscode) repository. For a guide to the codebase, see [VOID_CODEBASE_GUIDE](https://github.com/voideditor/void/blob/main/VOID_CODEBASE_GUIDE.md).
+## 🏗️ Architecture
 
-For a guide on how to develop your own version of Void, see [HOW_TO_CONTRIBUTE](https://github.com/voideditor/void/blob/main/HOW_TO_CONTRIBUTE.md) and [void-builder](https://github.com/voideditor/void-builder).
+Orcide is built on VS Code's Electron architecture with custom AI orchestration layers:
 
+- **Frontend**: Monaco Editor + React with Tailwind CSS
+- **AI Layer**: Multi-provider LLM integration via `src/vs/workbench/contrib/void/`
+- **Backend**: Electron main process for native capabilities
+- **Self-Hosted**: Docker-ready with web server mode
 
+See [ORCIDE_CODEBASE_GUIDE.md](./ORCIDE_CODEBASE_GUIDE.md) for the full codebase guide.
 
+## 🔗 Ecosystem
 
-## Support
-You can always reach us in our Discord server or contact us via email: hello@voideditor.com.
+- 🌐 [Orcest.ai](https://orcest.ai) — AI Orchestration Platform
+- 🚪 [Dargah.ai](https://dargah.ai) — Model Gateway & Routing
+- 💻 [Orcide IDE](https://ide.orcest.ai) — This project
+
+## 📄 License
+
+[MIT License](./LICENSE.txt)
+
+## 🤝 Contributing
+
+We welcome contributions! See [HOW_TO_CONTRIBUTE.md](./HOW_TO_CONTRIBUTE.md) for guidelines.
+
+- 🐛 [Report Issues](https://github.com/danialsamiei/ide.orcest.ai/issues)
+- 📧 Contact: [hello@orcest.ai](mailto:hello@orcest.ai)
