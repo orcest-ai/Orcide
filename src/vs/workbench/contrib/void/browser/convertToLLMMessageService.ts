@@ -271,7 +271,7 @@ const prepareOpenAIOrAnthropicMessages = ({
 	// A COMPLETE HACK: last message is system message for context purposes
 
 	const sysMsgParts: string[] = []
-	if (aiInstructions) sysMsgParts.push(`GUIDELINES (from the user's .voidrules file):\n${aiInstructions}`)
+	if (aiInstructions) sysMsgParts.push(`GUIDELINES (from the user's .orcrules file):\n${aiInstructions}`)
 	if (systemMessage) sysMsgParts.push(systemMessage)
 	const combinedSystemMessage = sysMsgParts.join('\n\n')
 
@@ -545,25 +545,33 @@ class ConvertToLLMMessageService extends Disposable implements IConvertToLLMMess
 		super()
 	}
 
-	// Read .voidrules files from workspace folders
+	// Read .orcrules (or legacy .voidrules) files from workspace folders
 	private _getVoidRulesFileContents(): string {
 		try {
 			const workspaceFolders = this.workspaceContextService.getWorkspace().folders;
-			let voidRules = '';
+			let rules = '';
 			for (const folder of workspaceFolders) {
-				const uri = URI.joinPath(folder.uri, '.voidrules')
-				const { model } = this.voidModelService.getModel(uri)
-				if (!model) continue
-				voidRules += model.getValue(EndOfLinePreference.LF) + '\n\n';
+				// Try .orcrules first, fall back to .voidrules for backward compatibility
+				const orcrulesUri = URI.joinPath(folder.uri, '.orcrules')
+				const voidrulesUri = URI.joinPath(folder.uri, '.voidrules')
+				const { model: orcModel } = this.voidModelService.getModel(orcrulesUri)
+				if (orcModel) {
+					rules += orcModel.getValue(EndOfLinePreference.LF) + '\n\n';
+					continue
+				}
+				const { model: voidModel } = this.voidModelService.getModel(voidrulesUri)
+				if (voidModel) {
+					rules += voidModel.getValue(EndOfLinePreference.LF) + '\n\n';
+				}
 			}
-			return voidRules.trim();
+			return rules.trim();
 		}
 		catch (e) {
 			return ''
 		}
 	}
 
-	// Get combined AI instructions from settings and .voidrules files
+	// Get combined AI instructions from settings and .orcrules files
 	private _getCombinedAIInstructions(): string {
 		const globalAIInstructions = this.voidSettingsService.state.globalSettings.aiInstructions;
 		const voidRulesFileContent = this._getVoidRulesFileContents();
