@@ -598,7 +598,7 @@ const VoidOnboardingContent = () => {
 				<div className='flex flex-col items-center gap-8'>
 					<div className="text-5xl font-light text-center">Welcome to Orcide</div>
 
-					{/* Slice of Void image */}
+					{/* Orcide logo */}
 					<div className='max-w-md w-full h-[30vh] mx-auto flex items-center justify-center'>
 						{!isLinux && <VoidIcon />}
 					</div>

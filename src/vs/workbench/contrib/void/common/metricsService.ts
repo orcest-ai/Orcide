@@ -79,6 +79,6 @@ registerAction2(class extends Action2 {
 
 		const debugProperties = await metricsService.getDebuggingProperties()
 		console.log('Metrics:', debugProperties)
-		notifService.info(`Void Debug info:\n${JSON.stringify(debugProperties, null, 2)}`)
+		notifService.info(`Orcide Debug info:\n${JSON.stringify(debugProperties, null, 2)}`)
 	}
 })
