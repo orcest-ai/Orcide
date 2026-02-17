@@ -128,7 +128,11 @@ const _stateWithMergedDefaultModels = (state: VoidSettingsState): VoidSettingsSt
 		const defaultModels = defaultSettingsOfProvider[providerName]?.models ?? []
 		const currentModels = newSettingsOfProvider[providerName]?.models ?? []
 		const defaultModelNames = defaultModels.map(m => m.modelName)
-		const newModels = _modelsWithSwappedInNewModels({ existingModels: currentModels, models: defaultModelNames, type: 'default' })
+		let newModels = _modelsWithSwappedInNewModels({ existingModels: currentModels, models: defaultModelNames, type: 'default' })
+		const defaultsInNew = newModels.filter(m => m.type === 'default')
+		if (defaultsInNew.length > 0 && defaultsInNew.length < 10 && defaultsInNew.every(m => m.isHidden)) {
+			newModels = newModels.map(m => m.type === 'default' ? { ...m, isHidden: false } : m)
+		}
 		newSettingsOfProvider = {
 			...newSettingsOfProvider,
 			[providerName]: {
