@@ -21,7 +21,10 @@ class ConvertContribWorkbenchContribution extends Disposable implements IWorkben
 
 		const initializeURI = (uri: URI) => {
 			this.workspaceContext.getWorkspace()
+			// Initialize both .orcrules and .voidrules (for backward compatibility)
+			const orcrulesURI = URI.joinPath(uri, '.orcrules')
 			const voidRulesURI = URI.joinPath(uri, '.voidrules')
+			this.voidModelService.initializeModel(orcrulesURI)
 			this.voidModelService.initializeModel(voidRulesURI)
 		}
 

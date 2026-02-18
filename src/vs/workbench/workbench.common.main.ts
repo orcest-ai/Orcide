@@ -12,8 +12,8 @@ import './browser/workbench.contribution.js';
 
 //#endregion
 
-//#region --- Void
-import './contrib/void/browser/void.contribution.js'; // Void added this
+//#region --- Orcide (AI Orchestration)
+import './contrib/void/browser/void.contribution.js'; // Orcide core (legacy path: contrib/void/)
 //#endregion
 
 //#region --- workbench actions

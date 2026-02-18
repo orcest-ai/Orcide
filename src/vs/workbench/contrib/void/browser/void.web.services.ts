@@ -43,7 +43,7 @@ class LLMMessageServiceWeb extends Disposable implements ILLMMessageService {
 		const { onError, modelSelection } = params;
 
 		if (modelSelection === null) {
-			onError({ message: 'Please add a provider in Void\'s Settings.', fullError: null });
+			onError({ message: 'Please add a provider in Orcide\'s Settings.', fullError: null });
 			return null;
 		}
 
@@ -82,7 +82,7 @@ class LLMMessageServiceWeb extends Disposable implements ILLMMessageService {
 
 			if (!apiKey) {
 				onError({
-					message: `API key not set for ${modelSelection.providerName}. Please configure it in Void Settings.`,
+					message: `API key not set for ${modelSelection.providerName}. Please configure it in Orcide Settings.`,
 					fullError: null
 				});
 				return;
