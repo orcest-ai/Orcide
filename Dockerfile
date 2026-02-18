@@ -45,7 +45,7 @@ RUN npm i --ignore-scripts \
     && (cd remote && npm rebuild)
 
 # Build: React components first, then compile produces out/ (server + workbench), compile-web adds extension web bundles
-ENV NODE_OPTIONS="--max-old-space-size=8192"
+ENV NODE_OPTIONS="--max-old-space-size=4096"
 RUN npm run buildreact \
     && npm run compile \
     && npm run compile-web
