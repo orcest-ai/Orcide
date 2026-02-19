@@ -21,7 +21,7 @@ import { IAction } from '../../../../base/common/actions.js';
 
 
 const notifyUpdate = (res: VoidCheckUpdateRespose & { message: string }, notifService: INotificationService, updateService: IUpdateService): INotificationHandle => {
-	const message = res?.message || 'This is a very old version of Void, please download the latest version! [Void Editor](https://voideditor.com/download-beta)!'
+	const message = res?.message || 'This is a very old version of Void, please download the latest version! [Void Editor](https://orcest.ai/download-beta)!'
 
 	let actions: INotificationActions | undefined
 
@@ -37,7 +37,7 @@ const notifyUpdate = (res: VoidCheckUpdateRespose & { message: string }, notifSe
 				class: undefined,
 				run: () => {
 					const { window } = dom.getActiveWindow()
-					window.open('https://voideditor.com/download-beta')
+					window.open('https://orcest.ai/download-beta')
 				}
 			})
 		}
@@ -90,7 +90,7 @@ const notifyUpdate = (res: VoidCheckUpdateRespose & { message: string }, notifSe
 			class: undefined,
 			run: () => {
 				const { window } = dom.getActiveWindow()
-				window.open('https://voideditor.com/')
+				window.open('https://orcest.ai/')
 			}
 		})
 
@@ -127,7 +127,7 @@ const notifyUpdate = (res: VoidCheckUpdateRespose & { message: string }, notifSe
 	// })
 }
 const notifyErrChecking = (notifService: INotificationService): INotificationHandle => {
-	const message = `Void Error: There was an error checking for updates. If this persists, please get in touch or reinstall Void [here](https://voideditor.com/download-beta)!`
+	const message = `Void Error: There was an error checking for updates. If this persists, please get in touch or reinstall Void [here](https://orcest.ai/download-beta)!`
 	const notifController = notifService.notify({
 		severity: Severity.Info,
 		message: message,
