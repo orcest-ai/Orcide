@@ -21,3 +21,7 @@ export const THREAD_STORAGE_KEY = 'void.chatThreadStorageII'
 
 
 export const OPT_OUT_KEY = 'void.app.optOutAll'
+
+
+// SSO authentication state storage
+export const SSO_AUTH_STORAGE_KEY = 'orcest.sso.authState'

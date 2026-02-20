@@ -452,6 +452,13 @@ export type GlobalSettings = {
 	isOnboardingComplete: boolean;
 	disableSystemMessage: boolean;
 	autoAcceptLLMChanges: boolean;
+
+	// SSO authentication state (synced from OrcestSSOService)
+	ssoUserName: string;
+	ssoUserEmail: string;
+	ssoUserRole: string;
+	ssoUserId: string;
+	ssoAuthenticated: boolean;
 }
 
 export const defaultGlobalSettings: GlobalSettings = {
@@ -468,6 +475,13 @@ export const defaultGlobalSettings: GlobalSettings = {
 	isOnboardingComplete: false,
 	disableSystemMessage: false,
 	autoAcceptLLMChanges: false,
+
+	// SSO defaults
+	ssoUserName: '',
+	ssoUserEmail: '',
+	ssoUserRole: '',
+	ssoUserId: '',
+	ssoAuthenticated: false,
 }
 
 export type GlobalSettingName = keyof GlobalSettings
