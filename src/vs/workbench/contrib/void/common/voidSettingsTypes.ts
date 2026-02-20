@@ -58,7 +58,10 @@ type DisplayInfoForProviderName = {
 }
 
 export const displayInfoOfProviderName = (providerName: ProviderName): DisplayInfoForProviderName => {
-	if (providerName === 'anthropic') {
+	if (providerName === 'rainyModel') {
+		return { title: 'RainyModel (Orcest AI)', desc: 'Intelligent LLM routing proxy - free, internal, and premium models' }
+	}
+	else if (providerName === 'anthropic') {
 		return { title: 'Anthropic', }
 	}
 	else if (providerName === 'openAI') {
@@ -112,6 +115,7 @@ export const displayInfoOfProviderName = (providerName: ProviderName): DisplayIn
 
 export const subTextMdOfProviderName = (providerName: ProviderName): string => {
 
+	if (providerName === 'rainyModel') return 'Orcest AI unified LLM proxy. Get your [API Key here](https://login.orcest.ai). Supports direct provider access via `rainymodel/openrouter/<model>`, `rainymodel/huggingface/<model>`, etc.'
 	if (providerName === 'anthropic') return 'Get your [API Key here](https://console.anthropic.com/settings/keys).'
 	if (providerName === 'openAI') return 'Get your [API Key here](https://platform.openai.com/api-keys).'
 	if (providerName === 'deepseek') return 'Get your [API Key here](https://platform.deepseek.com/api_keys).'
@@ -144,7 +148,8 @@ export const displayInfoOfSettingName = (providerName: ProviderName, settingName
 
 			// **Please follow this convention**:
 			// The word "key..." here is a placeholder for the hash. For example, sk-ant-key... means the key will look like sk-ant-abcdefg123...
-			placeholder: providerName === 'anthropic' ? 'sk-ant-key...' : // sk-ant-api03-key
+			placeholder: providerName === 'rainyModel' ? 'sk-rm-key...' :
+				providerName === 'anthropic' ? 'sk-ant-key...' : // sk-ant-api03-key
 				providerName === 'openAI' ? 'sk-proj-key...' :
 					providerName === 'deepseek' ? 'sk-key...' :
 						providerName === 'openRouter' ? 'sk-or-key...' : // sk-or-v1-key
@@ -163,7 +168,8 @@ export const displayInfoOfSettingName = (providerName: ProviderName, settingName
 	}
 	else if (settingName === 'endpoint') {
 		return {
-			title: providerName === 'ollama' ? 'Endpoint' :
+			title: providerName === 'rainyModel' ? 'Endpoint' :
+				providerName === 'ollama' ? 'Endpoint' :
 				providerName === 'vLLM' ? 'Endpoint' :
 					providerName === 'lmStudio' ? 'Endpoint' :
 						providerName === 'openAICompatible' ? 'baseURL' : // (do not include /chat/completions)
@@ -173,7 +179,8 @@ export const displayInfoOfSettingName = (providerName: ProviderName, settingName
 										providerName === 'awsBedrock' ? 'Endpoint' :
 											'(never)',
 
-			placeholder: providerName === 'ollama' ? defaultProviderSettings.ollama.endpoint
+			placeholder: providerName === 'rainyModel' ? defaultProviderSettings.rainyModel.endpoint
+				: providerName === 'ollama' ? defaultProviderSettings.ollama.endpoint
 				: providerName === 'vLLM' ? defaultProviderSettings.vLLM.endpoint
 					: providerName === 'openAICompatible' ? 'https://my-website.com/v1'
 						: providerName === 'lmStudio' ? defaultProviderSettings.lmStudio.endpoint
@@ -256,6 +263,12 @@ const modelInfoOfDefaultModelNames = (defaultModelNames: string[]): { models: Vo
 
 // used when waiting and for a type reference
 export const defaultSettingsOfProvider: SettingsOfProvider = {
+	rainyModel: {
+		...defaultCustomSettings,
+		...defaultProviderSettings.rainyModel,
+		...modelInfoOfDefaultModelNames(defaultModelsOfProvider.rainyModel),
+		_didFillInProviderSettings: undefined,
+	},
 	anthropic: {
 		...defaultCustomSettings,
 		...defaultProviderSettings.anthropic,

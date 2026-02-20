@@ -74,7 +74,11 @@ const newOpenAICompatibleSDK = async ({ settingsOfProvider, providerName, includ
 		dangerouslyAllowBrowser: true,
 		...includeInPayload,
 	}
-	if (providerName === 'openAI') {
+	if (providerName === 'rainyModel') {
+		const thisConfig = settingsOfProvider[providerName]
+		return new OpenAI({ baseURL: `${thisConfig.endpoint}/v1`, apiKey: thisConfig.apiKey, ...commonPayloadOpts })
+	}
+	else if (providerName === 'openAI') {
 		const thisConfig = settingsOfProvider[providerName]
 		return new OpenAI({ apiKey: thisConfig.apiKey, ...commonPayloadOpts })
 	}
@@ -855,6 +859,11 @@ type CallFnOfProvider = {
 }
 
 export const sendLLMMessageToProviderImplementation = {
+	rainyModel: {
+		sendChat: (params) => _sendOpenAICompatibleChat(params),
+		sendFIM: null,
+		list: null,
+	},
 	anthropic: {
 		sendChat: sendAnthropicChat,
 		sendFIM: null,

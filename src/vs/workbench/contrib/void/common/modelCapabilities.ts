@@ -10,6 +10,10 @@ import { FeatureName, ModelSelectionOptions, OverridesOfModel, ProviderName } fr
 
 
 export const defaultProviderSettings = {
+	rainyModel: {
+		endpoint: 'https://rm.orcest.ai',
+		apiKey: '',
+	},
 	anthropic: {
 		apiKey: '',
 	},
@@ -72,6 +76,13 @@ export const defaultProviderSettings = {
 
 
 export const defaultModelsOfProvider = {
+	rainyModel: [ // https://rm.orcest.ai - Orcest AI unified LLM proxy
+		'rainymodel/auto',
+		'rainymodel/chat',
+		'rainymodel/code',
+		'rainymodel/agent',
+		'rainymodel/document',
+	],
 	openAI: [ // https://platform.openai.com/docs/models/gp
 		'gpt-4.1',
 		'gpt-4.1-mini',
@@ -1440,9 +1451,83 @@ const openRouterSettings: VoidStaticProviderInfo = {
 
 
 
+// ---------------- RAINYMODEL (Orcest AI) ----------------
+const rainyModelModelOptions = {
+	'rainymodel/auto': {
+		contextWindow: 32_768,
+		reservedOutputTokenSpace: 4_096,
+		cost: { input: 0, output: 0 },
+		downloadable: false,
+		supportsFIM: false,
+		supportsSystemMessage: 'system-role',
+		specialToolFormat: 'openai-style',
+		reasoningCapabilities: false,
+	},
+	'rainymodel/chat': {
+		contextWindow: 32_768,
+		reservedOutputTokenSpace: 4_096,
+		cost: { input: 0, output: 0 },
+		downloadable: false,
+		supportsFIM: false,
+		supportsSystemMessage: 'system-role',
+		specialToolFormat: 'openai-style',
+		reasoningCapabilities: false,
+	},
+	'rainymodel/code': {
+		contextWindow: 32_768,
+		reservedOutputTokenSpace: 4_096,
+		cost: { input: 0, output: 0 },
+		downloadable: false,
+		supportsFIM: false,
+		supportsSystemMessage: 'system-role',
+		specialToolFormat: 'openai-style',
+		reasoningCapabilities: false,
+	},
+	'rainymodel/agent': {
+		contextWindow: 200_000,
+		reservedOutputTokenSpace: 8_192,
+		cost: { input: 0, output: 0 },
+		downloadable: false,
+		supportsFIM: false,
+		supportsSystemMessage: 'system-role',
+		specialToolFormat: 'openai-style',
+		reasoningCapabilities: false,
+	},
+	'rainymodel/document': {
+		contextWindow: 32_768,
+		reservedOutputTokenSpace: 4_096,
+		cost: { input: 0, output: 0 },
+		downloadable: false,
+		supportsFIM: false,
+		supportsSystemMessage: 'system-role',
+		specialToolFormat: 'openai-style',
+		reasoningCapabilities: false,
+	},
+} as const satisfies { [s: string]: VoidStaticModelInfo }
+
+const rainyModelSettings: VoidStaticProviderInfo = {
+	modelOptions: rainyModelModelOptions,
+	modelOptionsFallback: (modelName) => {
+		// RainyModel supports direct provider passthrough (e.g. rainymodel/openrouter/anthropic/claude-sonnet-4)
+		const res = extensiveModelOptionsFallback(modelName)
+		if (res) return res
+		// Fallback to auto capabilities for unknown rainymodel routes
+		if (modelName.startsWith('rainymodel/')) {
+			return {
+				modelName,
+				recognizedModelName: 'rainymodel/auto',
+				...rainyModelModelOptions['rainymodel/auto'],
+			}
+		}
+		return null
+	},
+}
+
+
 // ---------------- model settings of everything above ----------------
 
 const modelSettingsOfProvider: { [providerName in ProviderName]: VoidStaticProviderInfo } = {
+	rainyModel: rainyModelSettings,
 	openAI: openAISettings,
 	anthropic: anthropicSettings,
 	xAI: xAISettings,
