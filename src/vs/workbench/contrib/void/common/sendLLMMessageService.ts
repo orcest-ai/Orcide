@@ -206,6 +206,7 @@ if (!isWeb) {
 		groq: 'https://api.groq.com/openai/v1',
 		xAI: 'https://api.x.ai/v1',
 		mistral: 'https://api.mistral.ai/v1',
+		orcestAI: 'https://rm.orcest.ai/v1',
 	};
 
 	class LLMMessageServiceWeb extends Disposable implements ILLMMessageService {
