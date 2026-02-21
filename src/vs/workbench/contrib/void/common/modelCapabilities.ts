@@ -66,8 +66,7 @@ export const defaultProviderSettings = {
 		endpoint: '', // optionally allow overriding default
 	},
 	orcestAI: {
-		endpoint: 'https://rm.orcest.ai/v1',
-		apiKey: '', // Will be populated from environment/SSO
+		endpoint: 'https://ollamafreeapi.orcest.ai/v1',
 	},
 
 } as const
@@ -149,15 +148,13 @@ export const defaultModelsOfProvider = {
 	awsBedrock: [],
 	liteLLM: [],
 	orcestAI: [
-		'rainymodel-pro',
-		'rainymodel-standard',
-		'rainymodel-lite',
-		'gpt-4o',
-		'gpt-4o-mini',
-		'claude-3.5-sonnet',
-		'gemini-1.5-pro',
-		'llama-3.1-70b',
-		'mixtral-8x7b',
+		'llama3.2:latest',
+		'llama3.1:latest',
+		'llama3.3:latest',
+		'mistral:latest',
+		'deepseek-r1:latest',
+		'qwen2.5-coder:7b',
+		'gemma:latest',
 	],
 
 
@@ -1455,48 +1452,19 @@ const openRouterSettings: VoidStaticProviderInfo = {
 
 
 
-// ---------------- ORCEST AI (RainyModel) ----------------
+// ---------------- ORCEST AI (OllamaFreeAPI) ----------------
 const orcestAIModelOptions = {
-	'rainymodel-pro': {
-		contextWindow: 128_000,
-		reservedOutputTokenSpace: 8_192,
-		cost: { input: 0, output: 0 },
-		downloadable: false,
-		supportsFIM: false,
-		supportsSystemMessage: 'system-role',
-		specialToolFormat: 'openai-style',
-		reasoningCapabilities: false,
-	},
-	'rainymodel-standard': {
-		contextWindow: 128_000,
-		reservedOutputTokenSpace: 8_192,
-		cost: { input: 0, output: 0 },
-		downloadable: false,
-		supportsFIM: false,
-		supportsSystemMessage: 'system-role',
-		specialToolFormat: 'openai-style',
-		reasoningCapabilities: false,
-	},
-	'rainymodel-lite': {
-		contextWindow: 64_000,
-		reservedOutputTokenSpace: 4_096,
-		cost: { input: 0, output: 0 },
-		downloadable: false,
-		supportsFIM: false,
-		supportsSystemMessage: 'system-role',
-		specialToolFormat: 'openai-style',
-		reasoningCapabilities: false,
-	},
 } as const satisfies { [s: string]: VoidStaticModelInfo }
 
 const orcestAISettings: VoidStaticProviderInfo = {
 	modelOptions: orcestAIModelOptions,
 	modelOptionsFallback: (modelName) => {
-		// For non-RainyModel models served through the aggregator, use the extensive fallback
-		return extensiveModelOptionsFallback(modelName)
+		// OllamaFreeAPI serves 650+ open-source models, use extensive fallback for capability detection
+		return extensiveModelOptionsFallback(modelName, { cost: { input: 0, output: 0 } })
 	},
 	providerReasoningIOSettings: {
 		input: { includeInPayload: openAICompatIncludeInPayloadReasoning },
+		output: { needsManualParse: true },
 	},
 }
 

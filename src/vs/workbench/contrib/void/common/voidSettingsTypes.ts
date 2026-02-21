@@ -107,7 +107,7 @@ export const displayInfoOfProviderName = (providerName: ProviderName): DisplayIn
 		return { title: 'AWS Bedrock', }
 	}
 	else if (providerName === 'orcestAI') {
-		return { title: 'Orcest AI (RainyModel)', }
+		return { title: 'Orcest AI (Free)', }
 	}
 
 	throw new Error(`descOfProviderName: Unknown provider name: "${providerName}"`)
@@ -131,7 +131,7 @@ export const subTextMdOfProviderName = (providerName: ProviderName): string => {
 	if (providerName === 'vLLM') return 'Read more about custom [Endpoints here](https://docs.vllm.ai/en/latest/getting_started/quickstart.html#openai-compatible-server).'
 	if (providerName === 'lmStudio') return 'Read more about custom [Endpoints here](https://lmstudio.ai/docs/app/api/endpoints/openai).'
 	if (providerName === 'liteLLM') return 'Read more about endpoints [here](https://docs.litellm.ai/docs/providers/openai_compatible).'
-	if (providerName === 'orcestAI') return 'Orcest AI integrated API. Models are available automatically through your SSO login. Powered by [RainyModel](https://rm.orcest.ai).'
+	if (providerName === 'orcestAI') return 'Orcest AI free API. No API key required. Powered by [OllamaFreeAPI](https://ollamafreeapi.orcest.ai) with 650+ open-source models.'
 
 	throw new Error(`subTextMdOfProviderName: Unknown provider name: "${providerName}"`)
 }
@@ -160,7 +160,6 @@ export const displayInfoOfSettingName = (providerName: ProviderName, settingName
 												providerName === 'googleVertex' ? 'AIzaSy...' :
 													providerName === 'microsoftAzure' ? 'key-...' :
 														providerName === 'awsBedrock' ? 'key-...' :
-															providerName === 'orcestAI' ? 'sk-orcest-key...' :
 																'',
 
 			isPasswordField: true,
@@ -186,7 +185,7 @@ export const displayInfoOfSettingName = (providerName: ProviderName, settingName
 							: providerName === 'liteLLM' ? 'http://localhost:4000'
 								: providerName === 'awsBedrock' ? 'http://localhost:4000/v1'
 									: providerName === 'orcestAI' ? defaultProviderSettings.orcestAI.endpoint
-										: '(never)',
+										: '(never)'
 
 
 		}

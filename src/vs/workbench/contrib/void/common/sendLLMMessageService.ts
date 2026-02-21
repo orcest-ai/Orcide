@@ -206,7 +206,7 @@ if (!isWeb) {
 		groq: 'https://api.groq.com/openai/v1',
 		xAI: 'https://api.x.ai/v1',
 		mistral: 'https://api.mistral.ai/v1',
-		orcestAI: 'https://rm.orcest.ai/v1',
+		orcestAI: 'https://ollamafreeapi.orcest.ai/v1',
 	};
 
 	class LLMMessageServiceWeb extends Disposable implements ILLMMessageService {
@@ -220,7 +220,7 @@ if (!isWeb) {
 		sendLLMMessage = (params: ServiceSendLLMMessageParams): string | null => {
 			const { onText, onFinalMessage, onError, modelSelection } = params;
 			if (modelSelection === null) {
-				onError({ message: `Please add a provider in Void's Settings.`, fullError: null });
+				onError({ message: `Please add a provider in Orcide's Settings.`, fullError: null });
 				return null;
 			}
 			const requestId = generateUuid();
