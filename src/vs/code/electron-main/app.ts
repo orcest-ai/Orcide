@@ -126,12 +126,12 @@ import ErrorTelemetry from '../../platform/telemetry/electron-main/errorTelemetr
 // in theory this is not allowed
 // ignore the eslint errors below
 import { IMetricsService } from '../../workbench/contrib/orcide/common/metricsService.js';
-import { IOrcideUpdateService } from '../../workbench/contrib/orcide/common/voidUpdateService.js';
+import { IOrcideUpdateService } from '../../workbench/contrib/orcide/common/orcideUpdateService.js';
 import { MetricsMainService } from '../../workbench/contrib/orcide/electron-main/metricsMainService.js';
-import { VoidMainUpdateService } from '../../workbench/contrib/orcide/electron-main/voidUpdateMainService.js';
+import { OrcideMainUpdateService } from '../../workbench/contrib/orcide/electron-main/orcideUpdateMainService.js';
 import { LLMMessageChannel } from '../../workbench/contrib/orcide/electron-main/sendLLMMessageChannel.js';
-import { VoidSCMService } from '../../workbench/contrib/orcide/electron-main/voidSCMMainService.js';
-import { IOrcideSCMService } from '../../workbench/contrib/orcide/common/voidSCMTypes.js';
+import { OrcideSCMService } from '../../workbench/contrib/orcide/electron-main/orcideSCMMainService.js';
+import { IOrcideSCMService } from '../../workbench/contrib/orcide/common/orcideSCMTypes.js';
 import { MCPChannel } from '../../workbench/contrib/orcide/electron-main/mcpChannel.js';
 /**
  * The main VS Code application. There will only ever be one instance,
@@ -1103,8 +1103,8 @@ export class CodeApplication extends Disposable {
 
 		// Void main process services (required for services with a channel for comm between browser and electron-main (node))
 		services.set(IMetricsService, new SyncDescriptor(MetricsMainService, undefined, false));
-		services.set(IOrcideUpdateService, new SyncDescriptor(VoidMainUpdateService, undefined, false));
-		services.set(IOrcideSCMService, new SyncDescriptor(VoidSCMService, undefined, false));
+		services.set(IOrcideUpdateService, new SyncDescriptor(OrcideMainUpdateService, undefined, false));
+		services.set(IOrcideSCMService, new SyncDescriptor(OrcideSCMService, undefined, false));
 
 		// Default Extensions Profile Init
 		services.set(IExtensionsProfileScannerService, new SyncDescriptor(ExtensionsProfileScannerService, undefined, true));
