@@ -95,6 +95,7 @@ const APP_ROOT = dirname(FileAccess.asFileUri('').fsPath);
 
 const STATIC_PATH = `/static`;
 const CALLBACK_PATH = `/callback`;
+const SSO_CALLBACK_PATH = `/auth/callback`;
 const WEB_EXTENSION_PATH = `/web-extension-resource`;
 
 export class WebClientServer {
@@ -132,6 +133,12 @@ export class WebClientServer {
 			if (pathname === CALLBACK_PATH) {
 				// callback support
 				return this._handleCallback(res);
+			}
+			if (pathname === SSO_CALLBACK_PATH) {
+				// SSO OAuth2 callback: serve the workbench so that the
+				// OrcideSSOBrowserContribution can detect the auth params
+				// and complete the login flow.
+				return this._handleRoot(req, res, parsedUrl);
 			}
 			if (pathname.startsWith(WEB_EXTENSION_PATH) && pathname.charCodeAt(WEB_EXTENSION_PATH.length) === CharCode.Slash) {
 				// extension resource support
