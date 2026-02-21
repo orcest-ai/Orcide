@@ -13,7 +13,7 @@ import './browser/workbench.contribution.js';
 //#endregion
 
 //#region --- Void
-import './contrib/void/browser/void.contribution.js'; // Void added this
+import './contrib/orcide/browser/orcide.contribution.js'; // Void added this
 //#endregion
 
 //#region --- workbench actions
@@ -192,7 +192,7 @@ import './contrib/notebook/browser/notebook.contribution.js';
 import './contrib/speech/browser/speech.contribution.js';
 
 // Chat
-// Void - this is still registered to avoid console errors, we just commented it out in chatParticipant.contribution.ts
+// Orcide - this is still registered to avoid console errors, we just commented it out in chatParticipant.contribution.ts
 import './contrib/chat/browser/chat.contribution.js';
 import './contrib/inlineChat/browser/inlineChat.contribution.js';
 import './contrib/mcp/browser/mcp.contribution.js';

@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=Orcide - URL Handler
+Comment=Open source AI code editor.
+GenericName=Text Editor
+Exec=orcide --open-url %U
+Icon=orcide
+Type=Application
+NoDisplay=true
+StartupNotify=true
+Categories=Utility;TextEditor;Development;IDE;
+MimeType=x-scheme-handler/orcide;
+Keywords=orcide;
