@@ -8,7 +8,7 @@ import { Disposable } from '../../../../base/common/lifecycle.js';
 import { createDecorator } from '../../../../platform/instantiation/common/instantiation.js';
 import { registerSingleton, InstantiationType } from '../../../../platform/instantiation/common/extensions.js';
 import { IStorageService, StorageScope, StorageTarget } from '../../../../platform/storage/common/storage.js';
-import { isWeb } from '../../../../base/common/platform.js';
+
 
 const ORCIDE_USER_PROFILE_KEY = 'orcide.userProfile'
 const ORCIDE_USER_PREFERENCES_KEY = 'orcide.userPreferences'
