@@ -65,6 +65,10 @@ export const defaultProviderSettings = {
 		region: 'us-east-1', // add region setting
 		endpoint: '', // optionally allow overriding default
 	},
+	orcestAI: {
+		endpoint: 'https://rm.orcest.ai/v1',
+		apiKey: '', // Will be populated from environment/SSO
+	},
 
 } as const
 
@@ -144,6 +148,17 @@ export const defaultModelsOfProvider = {
 	microsoftAzure: [],
 	awsBedrock: [],
 	liteLLM: [],
+	orcestAI: [
+		'rainymodel-pro',
+		'rainymodel-standard',
+		'rainymodel-lite',
+		'gpt-4o',
+		'gpt-4o-mini',
+		'claude-3.5-sonnet',
+		'gemini-1.5-pro',
+		'llama-3.1-70b',
+		'mixtral-8x7b',
+	],
 
 
 } as const satisfies Record<ProviderName, string[]>
@@ -1440,6 +1455,52 @@ const openRouterSettings: VoidStaticProviderInfo = {
 
 
 
+// ---------------- ORCEST AI (RainyModel) ----------------
+const orcestAIModelOptions = {
+	'rainymodel-pro': {
+		contextWindow: 128_000,
+		reservedOutputTokenSpace: 8_192,
+		cost: { input: 0, output: 0 },
+		downloadable: false,
+		supportsFIM: false,
+		supportsSystemMessage: 'system-role',
+		specialToolFormat: 'openai-style',
+		reasoningCapabilities: false,
+	},
+	'rainymodel-standard': {
+		contextWindow: 128_000,
+		reservedOutputTokenSpace: 8_192,
+		cost: { input: 0, output: 0 },
+		downloadable: false,
+		supportsFIM: false,
+		supportsSystemMessage: 'system-role',
+		specialToolFormat: 'openai-style',
+		reasoningCapabilities: false,
+	},
+	'rainymodel-lite': {
+		contextWindow: 64_000,
+		reservedOutputTokenSpace: 4_096,
+		cost: { input: 0, output: 0 },
+		downloadable: false,
+		supportsFIM: false,
+		supportsSystemMessage: 'system-role',
+		specialToolFormat: 'openai-style',
+		reasoningCapabilities: false,
+	},
+} as const satisfies { [s: string]: VoidStaticModelInfo }
+
+const orcestAISettings: VoidStaticProviderInfo = {
+	modelOptions: orcestAIModelOptions,
+	modelOptionsFallback: (modelName) => {
+		// For non-RainyModel models served through the aggregator, use the extensive fallback
+		return extensiveModelOptionsFallback(modelName)
+	},
+	providerReasoningIOSettings: {
+		input: { includeInPayload: openAICompatIncludeInPayloadReasoning },
+	},
+}
+
+
 // ---------------- model settings of everything above ----------------
 
 const modelSettingsOfProvider: { [providerName in ProviderName]: VoidStaticProviderInfo } = {
@@ -1465,6 +1526,7 @@ const modelSettingsOfProvider: { [providerName in ProviderName]: VoidStaticProvi
 	googleVertex: googleVertexSettings,
 	microsoftAzure: microsoftAzureSettings,
 	awsBedrock: awsBedrockSettings,
+	orcestAI: orcestAISettings,
 } as const
 
 
