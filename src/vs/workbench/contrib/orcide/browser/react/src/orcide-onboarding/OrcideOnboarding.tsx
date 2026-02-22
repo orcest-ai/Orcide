@@ -21,17 +21,18 @@ export const OrcideOnboarding = () => {
 	const accessor = useAccessor()
 	const orcideSettingsService = accessor.get('IOrcideSettingsService')
 
-	// Auto-complete onboarding - Orcide uses pre-configured models via SSO
-	// No API key setup page needed - models are pre-configured from environment
+	// Auto-complete onboarding - Orcide uses pre-configured models via Orcest ecosystem
+	// No API key setup needed - RainyModel is available by default through rm.orcest.ai
 	useEffect(() => {
 		if (!settingsState.globalSettings.isOnboardingComplete) {
-			// Auto-configure OrcestAI provider as ready (API key populated from environment/SSO)
+			// Auto-configure OrcestAI provider as ready (endpoint is pre-filled)
 			orcideSettingsService.setSettingOfProvider('orcestAI', '_didFillInProviderSettings', true)
 			// Set default model selections to RainyModel
-			orcideSettingsService.setModelSelectionOfFeature('Chat', { providerName: 'orcestAI', modelName: 'rainymodel/chat' })
+			// Agent mode (default chatMode) uses rainymodel/agent for best results
+			orcideSettingsService.setModelSelectionOfFeature('Chat', { providerName: 'orcestAI', modelName: 'rainymodel/agent' })
 			orcideSettingsService.setModelSelectionOfFeature('Ctrl+K', { providerName: 'orcestAI', modelName: 'rainymodel/code' })
 			orcideSettingsService.setModelSelectionOfFeature('Autocomplete', { providerName: 'orcestAI', modelName: 'rainymodel/code' })
-			orcideSettingsService.setModelSelectionOfFeature('Apply', { providerName: 'orcestAI', modelName: 'rainymodel/chat' })
+			orcideSettingsService.setModelSelectionOfFeature('Apply', { providerName: 'orcestAI', modelName: 'rainymodel/agent' })
 			orcideSettingsService.setModelSelectionOfFeature('SCM', { providerName: 'orcestAI', modelName: 'rainymodel/agent' })
 		}
 	}, [])

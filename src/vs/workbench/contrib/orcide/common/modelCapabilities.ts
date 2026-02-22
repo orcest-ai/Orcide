@@ -10,6 +10,9 @@ import { FeatureName, ModelSelectionOptions, OverridesOfModel, ProviderName } fr
 
 
 export const defaultProviderSettings = {
+	orcestAI: { // Orcest ecosystem integrated LLM proxy — enabled by default
+		endpoint: 'https://rm.orcest.ai/v1',
+	},
 	anthropic: {
 		apiKey: '',
 	},
@@ -65,10 +68,6 @@ export const defaultProviderSettings = {
 		region: 'us-east-1', // add region setting
 		endpoint: '', // optionally allow overriding default
 	},
-	orcestAI: {
-		endpoint: 'https://rm.orcest.ai/v1',
-		apiKey: '', // Will be populated from environment/SSO
-	},
 
 } as const
 
@@ -76,6 +75,13 @@ export const defaultProviderSettings = {
 
 
 export const defaultModelsOfProvider = {
+	orcestAI: [
+		// Core RainyModel aliases (intelligent routing through rm.orcest.ai)
+		'rainymodel/agent',
+		'rainymodel/auto',
+		'rainymodel/chat',
+		'rainymodel/code',
+	],
 	openAI: [ // https://platform.openai.com/docs/models/gp
 		'gpt-4.1',
 		'gpt-4.1-mini',
@@ -148,12 +154,6 @@ export const defaultModelsOfProvider = {
 	microsoftAzure: [],
 	awsBedrock: [],
 	liteLLM: [],
-	orcestAI: [
-		'rainymodel/auto',
-		'rainymodel/chat',
-		'rainymodel/code',
-		'rainymodel/agent',
-	],
 
 
 } as const satisfies Record<ProviderName, string[]>
@@ -1451,8 +1451,12 @@ const openRouterSettings: OrcideStaticProviderInfo = {
 
 
 // ---------------- ORCEST AI (RainyModel) ----------------
+// RainyModel is the central LLM routing proxy for the Orcest ecosystem.
+// It routes requests through tiers: FREE (HuggingFace) → INTERNAL (Ollama) → PREMIUM (OpenRouter)
+// API: https://rm.orcest.ai/v1  |  Auth: Bearer sk-rm-...
 const orcestAIModelOptions = {
-	'rainymodel-pro': {
+	// --- Core RainyModel aliases (routed through rm.orcest.ai) ---
+	'rainymodel/auto': { // General purpose, cost-optimized routing (FREE→INTERNAL→PREMIUM)
 		contextWindow: 128_000,
 		reservedOutputTokenSpace: 8_192,
 		cost: { input: 0, output: 0 },
@@ -1462,7 +1466,7 @@ const orcestAIModelOptions = {
 		specialToolFormat: 'openai-style',
 		reasoningCapabilities: false,
 	},
-	'rainymodel-standard': {
+	'rainymodel/chat': { // Conversational, same routing as auto but optimized for chat
 		contextWindow: 128_000,
 		reservedOutputTokenSpace: 8_192,
 		cost: { input: 0, output: 0 },
@@ -1472,9 +1476,19 @@ const orcestAIModelOptions = {
 		specialToolFormat: 'openai-style',
 		reasoningCapabilities: false,
 	},
-	'rainymodel-lite': {
-		contextWindow: 64_000,
-		reservedOutputTokenSpace: 4_096,
+	'rainymodel/code': { // Code generation (Qwen2.5-Coder backends)
+		contextWindow: 128_000,
+		reservedOutputTokenSpace: 8_192,
+		cost: { input: 0, output: 0 },
+		downloadable: false,
+		supportsFIM: true,
+		supportsSystemMessage: 'system-role',
+		specialToolFormat: 'openai-style',
+		reasoningCapabilities: false,
+	},
+	'rainymodel/agent': { // Agent/complex tasks, PREMIUM-first routing (Claude Sonnet → fallbacks)
+		contextWindow: 200_000,
+		reservedOutputTokenSpace: 8_192,
 		cost: { input: 0, output: 0 },
 		downloadable: false,
 		supportsFIM: false,
@@ -1487,6 +1501,20 @@ const orcestAIModelOptions = {
 const orcestAISettings: OrcideStaticProviderInfo = {
 	modelOptions: orcestAIModelOptions,
 	modelOptionsFallback: (modelName) => {
+		const lower = modelName.toLowerCase()
+		// Recognize rainymodel aliases
+		if (lower.includes('rainymodel') && lower.includes('agent')) {
+			return { modelName, recognizedModelName: 'rainymodel/agent', ...orcestAIModelOptions['rainymodel/agent'] }
+		}
+		if (lower.includes('rainymodel') && lower.includes('code')) {
+			return { modelName, recognizedModelName: 'rainymodel/code', ...orcestAIModelOptions['rainymodel/code'] }
+		}
+		if (lower.includes('rainymodel') && lower.includes('chat')) {
+			return { modelName, recognizedModelName: 'rainymodel/chat', ...orcestAIModelOptions['rainymodel/chat'] }
+		}
+		if (lower.includes('rainymodel')) {
+			return { modelName, recognizedModelName: 'rainymodel/auto', ...orcestAIModelOptions['rainymodel/auto'] }
+		}
 		// For non-RainyModel models served through the aggregator, use the extensive fallback
 		return extensiveModelOptionsFallback(modelName)
 	},
@@ -1499,6 +1527,10 @@ const orcestAISettings: OrcideStaticProviderInfo = {
 // ---------------- model settings of everything above ----------------
 
 const modelSettingsOfProvider: { [providerName in ProviderName]: OrcideStaticProviderInfo } = {
+	// Orcest ecosystem (default provider)
+	orcestAI: orcestAISettings,
+
+	// Major cloud providers
 	openAI: openAISettings,
 	anthropic: anthropicSettings,
 	xAI: xAISettings,
@@ -1521,7 +1553,6 @@ const modelSettingsOfProvider: { [providerName in ProviderName]: OrcideStaticPro
 	googleVertex: googleVertexSettings,
 	microsoftAzure: microsoftAzureSettings,
 	awsBedrock: awsBedrockSettings,
-	orcestAI: orcestAISettings,
 } as const
 
 

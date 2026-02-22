@@ -107,7 +107,7 @@ export const displayInfoOfProviderName = (providerName: ProviderName): DisplayIn
 		return { title: 'AWS Bedrock', }
 	}
 	else if (providerName === 'orcestAI') {
-		return { title: 'Orcest AI (RainyModel)', }
+		return { title: 'Orcest AI (RainyModel)', desc: 'Orcest ecosystem integrated LLM proxy' }
 	}
 
 	throw new Error(`descOfProviderName: Unknown provider name: "${providerName}"`)
@@ -263,6 +263,12 @@ const modelInfoOfDefaultModelNames = (defaultModelNames: string[]): { models: Or
 
 // used when waiting and for a type reference
 export const defaultSettingsOfProvider: SettingsOfProvider = {
+	orcestAI: { // Orcest ecosystem — enabled by default (endpoint is pre-filled)
+		...defaultCustomSettings,
+		...defaultProviderSettings.orcestAI,
+		...modelInfoOfDefaultModelNames(defaultModelsOfProvider.orcestAI),
+		_didFillInProviderSettings: undefined,
+	},
 	anthropic: {
 		...defaultCustomSettings,
 		...defaultProviderSettings.anthropic,
@@ -357,12 +363,6 @@ export const defaultSettingsOfProvider: SettingsOfProvider = {
 		...defaultCustomSettings,
 		...defaultProviderSettings.awsBedrock,
 		...modelInfoOfDefaultModelNames(defaultModelsOfProvider.awsBedrock),
-		_didFillInProviderSettings: undefined,
-	},
-	orcestAI: {
-		...defaultCustomSettings,
-		...defaultProviderSettings.orcestAI,
-		...modelInfoOfDefaultModelNames(defaultModelsOfProvider.orcestAI),
 		_didFillInProviderSettings: undefined,
 	},
 }

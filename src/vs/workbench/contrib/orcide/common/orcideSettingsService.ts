@@ -215,10 +215,18 @@ const _validatedModelState = (state: Omit<OrcideSettingsState, '_modelOptions'>)
 
 
 
+const _defaultOrcestModelSelection: ModelSelection = { providerName: 'orcestAI', modelName: 'rainymodel/agent' }
+
 const defaultState = () => {
 	const d: OrcideSettingsState = {
 		settingsOfProvider: deepClone(defaultSettingsOfProvider),
-		modelSelectionOfFeature: { 'Chat': null, 'Ctrl+K': null, 'Autocomplete': null, 'Apply': null, 'SCM': null },
+		modelSelectionOfFeature: {
+			'Chat': deepClone(_defaultOrcestModelSelection),
+			'Ctrl+K': deepClone(_defaultOrcestModelSelection),
+			'Autocomplete': null, // Autocomplete needs FIM models, rainymodel/agent doesn't support FIM
+			'Apply': deepClone(_defaultOrcestModelSelection),
+			'SCM': deepClone(_defaultOrcestModelSelection),
+		},
 		globalSettings: deepClone(defaultGlobalSettings),
 		optionsOfModelSelection: { 'Chat': {}, 'Ctrl+K': {}, 'Autocomplete': {}, 'Apply': {}, 'SCM': {} },
 		overridesOfModel: deepClone(defaultOverridesOfModel),
@@ -293,9 +301,16 @@ class OrcideSettingsService extends Disposable implements IOrcideSettingsService
 			}
 			// add disableSystemMessage feature
 			if (readS.globalSettings.disableSystemMessage === undefined) readS.globalSettings.disableSystemMessage = false;
-			
+
 			// add autoAcceptLLMChanges feature
 			if (readS.globalSettings.autoAcceptLLMChanges === undefined) readS.globalSettings.autoAcceptLLMChanges = false;
+
+			// Migrate null model selections to default orcestAI/rainymodel/agent
+			for (const featureName of ['Chat', 'Ctrl+K', 'Apply', 'SCM'] as const) {
+				if (readS.modelSelectionOfFeature[featureName] === null) {
+					readS.modelSelectionOfFeature[featureName] = deepClone(_defaultOrcestModelSelection)
+				}
+			}
 		}
 		catch (e) {
 			readS = defaultState()

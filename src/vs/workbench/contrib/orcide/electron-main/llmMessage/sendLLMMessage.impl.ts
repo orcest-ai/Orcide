@@ -169,7 +169,14 @@ const newOpenAICompatibleSDK = async ({ settingsOfProvider, providerName, includ
 	}
 	else if (providerName === 'orcestAI') {
 		const thisConfig = settingsOfProvider[providerName]
-		return new OpenAI({ baseURL: thisConfig.endpoint, apiKey: thisConfig.apiKey || 'noop', ...commonPayloadOpts })
+		return new OpenAI({
+			baseURL: thisConfig.endpoint || 'https://rm.orcest.ai/v1',
+			apiKey: thisConfig.apiKey || 'sk-rm-orcide-default',
+			defaultHeaders: {
+				'X-Orcide-Source': 'ide.orcest.ai',
+			},
+			...commonPayloadOpts,
+		})
 	}
 
 	else throw new Error(`Orcide providerName was invalid: ${providerName}.`)
