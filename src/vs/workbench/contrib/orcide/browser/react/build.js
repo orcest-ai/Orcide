@@ -3,8 +3,7 @@
  *  Licensed under the MIT License. See LICENSE.txt for more information.
  *--------------------------------------------------------------------------------------*/
 
-import { execSync } from 'child_process';
-import { spawn } from 'cross-spawn'
+import { execSync, spawn } from 'child_process';
 // Added lines below
 import fs from 'fs';
 import path from 'path';
