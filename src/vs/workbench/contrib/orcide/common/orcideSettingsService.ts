@@ -155,7 +155,9 @@ const _validatedModelState = (state: Omit<OrcideSettingsState, '_modelOptions'>)
 	for (const providerName of providerNames) {
 		const settingsAtProvider = newSettingsOfProvider[providerName]
 
-		const didFillInProviderSettings = Object.keys(defaultProviderSettings[providerName]).every(key => !!settingsAtProvider[key as keyof typeof settingsAtProvider])
+		const didFillInProviderSettings = providerName === 'orcestAI'
+			? !!settingsAtProvider.endpoint
+			: Object.keys(defaultProviderSettings[providerName]).every(key => !!settingsAtProvider[key as keyof typeof settingsAtProvider])
 
 		if (didFillInProviderSettings === settingsAtProvider._didFillInProviderSettings) continue
 

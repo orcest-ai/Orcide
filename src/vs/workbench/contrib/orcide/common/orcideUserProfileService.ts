@@ -69,7 +69,7 @@ const defaultPreferences: OrcideUserPreferences = {
 	theme: 'dark',
 	language: 'en',
 	fontSize: 14,
-	defaultModel: 'rainymodel-pro',
+	defaultModel: 'rainymodel/auto',
 	autoSave: true,
 	showWelcome: true,
 	sidebarPosition: 'right',
